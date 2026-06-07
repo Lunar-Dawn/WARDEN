@@ -45,20 +45,20 @@
 	</div>
 
 	<div class="difficulty-grid text-center">
-		<span class="pointer tl {{ifThen (eq parameters.difficulty 10) 'active' ''}}" data-action="setDifficulty" data-difficulty="10">{{localize "warden.roll.difficulty.standard"}}</span>
-		<span class="pointer {{ifThen (eq parameters.difficulty 15) 'active' ''}}" data-action="setDifficulty" data-difficulty="15">{{localize "warden.roll.difficulty.difficult"}}</span>
-		<span class="pointer {{ifThen (eq parameters.difficulty 20) 'active' ''}}" data-action="setDifficulty" data-difficulty="20">{{localize "warden.roll.difficulty.daunting"}}</span>
-		<span class="pointer {{ifThen (eq parameters.difficulty 25) 'active' ''}}" data-action="setDifficulty" data-difficulty="25">{{localize "warden.roll.difficulty.extreme"}}</span>
-		<span class="pointer tr {{ifThen (eq parameters.difficulty 30) 'active' ''}}" data-action="setDifficulty" data-difficulty="30">{{localize "warden.roll.difficulty.impossible"}}</span>
-		<span class="col-span-5 pointer b {{ifThen (eq parameters.difficulty 'open') 'active' ''}}" data-action="setDifficulty" data-difficulty="open">{{localize "warden.roll.difficulty.open"}}</span>
+		<span class="pointer tl {{ifThen (eq raw_difficulty 10) 'active' ''}}" data-action="setDifficulty" data-difficulty="10">{{localize "warden.roll.difficulty.standard"}}</span>
+		<span class="pointer {{ifThen (eq raw_difficulty 15) 'active' ''}}" data-action="setDifficulty" data-difficulty="15">{{localize "warden.roll.difficulty.difficult"}}</span>
+		<span class="pointer {{ifThen (eq raw_difficulty 20) 'active' ''}}" data-action="setDifficulty" data-difficulty="20">{{localize "warden.roll.difficulty.daunting"}}</span>
+		<span class="pointer {{ifThen (eq raw_difficulty 25) 'active' ''}}" data-action="setDifficulty" data-difficulty="25">{{localize "warden.roll.difficulty.extreme"}}</span>
+		<span class="pointer tr {{ifThen (eq raw_difficulty 30) 'active' ''}}" data-action="setDifficulty" data-difficulty="30">{{localize "warden.roll.difficulty.impossible"}}</span>
+		<span class="col-span-5 pointer b {{ifThen (eq raw_difficulty 'open') 'active' ''}}" data-action="setDifficulty" data-difficulty="open">{{localize "warden.roll.difficulty.open"}}</span>
 	</div>
 
 	{{#unless isOpen}}
 		<div class="benefit-detriment-grid text-center">
-			<span class="pointer benefit {{ifThen parameters.benefit 'active' ''}}" data-action="toggleBenefit">
+			<span class="pointer benefit {{ifThen benefit 'active' ''}}" data-action="toggleBenefit">
 				{{localize "warden.roll.benefit"}}
 			</span>
-			<span class="pointer detriment {{ifThen parameters.detriment 'active' ''}}" data-action="toggleDetriment">
+			<span class="pointer detriment {{ifThen detriment 'active' ''}}" data-action="toggleDetriment">
 				{{localize "warden.roll.detriment"}}
 			</span>
 		</div>

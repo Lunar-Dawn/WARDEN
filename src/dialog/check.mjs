@@ -66,11 +66,16 @@ export class CheckWindow extends HandlebarsApplicationMixin(ApplicationV2) {
 	async _prepareContext(options) {
 		const context = await super._prepareContext(options);
 
+		context.manager = this.manager;
 		context.resolver = this.manager.resolver;
 		context.formula = this.manager.formula;
 
 		context.difficulty = this.manager.difficulty;
 		context.isOpen = this.manager.isOpen;
+
+		context.raw_difficulty = this.manager.parameters.difficulty;
+		context.benefit = this.manager.parameters.benefit;
+		context.detriment = this.manager.parameters.detriment;
 
 		context.pending_effect = this.pending_effect;
 		context.choices = {

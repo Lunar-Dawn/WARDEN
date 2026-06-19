@@ -7,7 +7,7 @@
 		"minimum": "14",
 		"verified": "14.363"
 	},
-	"esmodules": ["src/warden.mjs"],
+	"esmodules": ["dist/warden.js"],
 	"styles": ["static/style.css"],
 	"documentTypes": {
 		"Actor": {

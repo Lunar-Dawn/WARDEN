@@ -1,0 +1,15 @@
+.vscode/*
+*.code-workspace
+.history/
+*.css.map
+
+**/.vite-cache/*
+
+**/build/*
+**/dist/*
+node_modules/
+/workspace
+workspace/
+
+**/packs/**/*
+.eslintcache

@@ -11,6 +11,7 @@ export class CharacterSheet extends BaseCharacterSheet {
 				"systems/warden/static/partials/proficiency-display.hbs",
 				"systems/warden/static/partials/skill-display.hbs",
 				"systems/warden/static/partials/knowledge-skill-display.hbs",
+				"systems/warden/static/partials/condition-display.hbs",
 			],
 		},
 	};
@@ -25,7 +26,7 @@ export class CharacterSheet extends BaseCharacterSheet {
 			addKnowledgeSkill: CharacterSheet.addKnowledgeSkill,
 			deleteKnowledgeSkill: CharacterSheet.deleteKnowledgeSkill,
 			check: CharacterSheet.check,
-			toggleDescription: CharacterSheet.#toggleDescription,
+			toggleDescription: CharacterSheet.toggleDescription,
 		},
 		window: {
 			contentClasses: ["zero-pad"],
@@ -37,8 +38,6 @@ export class CharacterSheet extends BaseCharacterSheet {
 			submitOnChange: true,
 		},
 	};
-
-	expandedDescriptions = new Set();
 
 	async _prepareContext(options) {
 		const context = await super._prepareContext(options);
@@ -491,18 +490,5 @@ export class CharacterSheet extends BaseCharacterSheet {
 		return runCheck(rollData, speaker, resolver, parameters, {
 			skip: e.shiftKey,
 		});
-	}
-
-	static async #toggleDescription(_, target) {
-		const container = target.closest("[data-item-id]");
-		const id = container.dataset.itemId;
-
-		if (this.expandedDescriptions.has(id)) {
-			this.expandedDescriptions.delete(id);
-			container.classList.remove("expanded");
-		} else {
-			this.expandedDescriptions.add(id);
-			container.classList.add("expanded");
-		}
 	}
 }

@@ -763,6 +763,37 @@
 	}
 }
 
+/* Separated, since both sheets have it */
+.condition-wrapper {
+	padding-right: 0;
+	margin-right: 0;
+
+	height: 22.24em; /* TODO: HOLY SHIT YOU SHOULDN'T HARDCODE SHIT LIKE THIS */
+	min-height: 100%;
+
+	.content {
+		padding: 0.25em 2ch;
+		overflow-y: hidden;
+
+		display: grid;
+		grid-template-rows: 0fr;
+
+		transition: grid-template-rows 0.3s ease;
+
+		> div {
+			min-height: 0;
+		}
+	}
+
+	.expanded > .content {
+		grid-template-rows: 1fr;
+		overflow-y: visible;
+		transition:
+			grid-template-rows 0.3s ease,
+			overflow-y 0s 0.3s allow-discrete;
+	}
+}
+
 /* Override to allow floating roll button to be pressed */
 #warden-chat-roll-button {
 	pointer-events: all;

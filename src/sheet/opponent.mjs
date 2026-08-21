@@ -5,6 +5,9 @@ export class OpponentSheet extends BaseCharacterSheet {
 	static PARTS = {
 		main: {
 			template: "systems/warden/static/sheets/opponent-sheet.hbs",
+			templates: [
+				"systems/warden/static/partials/condition-display.hbs",
+			],
 		},
 	};
 
@@ -14,6 +17,7 @@ export class OpponentSheet extends BaseCharacterSheet {
 			check: OpponentSheet.check,
 			addAbility: OpponentSheet.addAbility,
 			deleteAbility: OpponentSheet.deleteAbility,
+			toggleDescription: OpponentSheet.toggleDescription,
 		},
 		window: {
 			contentClasses: ["zero-pad"],

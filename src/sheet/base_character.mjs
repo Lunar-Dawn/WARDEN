@@ -2,6 +2,8 @@ const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ActorSheet } = foundry.applications.sheets;
 
 export class BaseCharacterSheet extends HandlebarsApplicationMixin(ActorSheet) {
+	expandedDescriptions = new Set();
+
 	async _prepareContext(options) {
 		const context = await super._prepareContext(options);
 
@@ -16,6 +18,7 @@ export class BaseCharacterSheet extends HandlebarsApplicationMixin(ActorSheet) {
 				name: a.name,
                 variant: a.system.variant,
                 type: a.system.type,
+				expanded: this.expandedDescriptions.has(a.id),
 				description:
 					await foundry.applications.ux.TextEditor.implementation.enrichHTML(
 						a.system.description,
@@ -50,4 +53,66 @@ export class BaseCharacterSheet extends HandlebarsApplicationMixin(ActorSheet) {
     async onDropCondition(event, item) {
 		await this.actor.system.editConditions(item, { destArea: "condition_item_ids" });
     }
+
+	async _onFirstRender(context, options) {
+		await super._onFirstRender(context, options);
+
+		this._createContextMenu(
+			() => [
+				{
+					label: "warden.character.sheet.button.edit",
+					icon: "fas fa-edit",
+					onClick: (e) => {
+						const id =
+							e.target.closest("[data-item-id]").dataset.itemId;
+						this.actor.items.get(id).sheet.render(true);
+					},
+				},
+				{
+					label: "warden.character.sheet.button.delete",
+					icon: "fas fa-trash-can",
+					onClick: async (_, target) => {
+						const id =
+							target.closest("[data-item-id]").dataset.itemId;
+						const item = this.actor.items.get(id);
+
+						const question = _loc("COMMON.AreYouSure");
+						const warning = _loc("SIDEBAR.DeleteWarning", {
+							type: "Condition",
+						});
+						const content = `<p><strong>${question}</strong> ${warning}</p>`;
+
+						await foundry.applications.api.DialogV2.confirm({
+							content,
+							yes: {
+								callback: () => {
+									this.actor.system.editConditions(item, {
+										srcArea: "condition_item_ids",
+									});
+								},
+							},
+							window: {
+								icon: "fa-solid fa-trash",
+								title: `${_loc("DOCUMENT.Delete", { type: "Condition" })}: ${item.name}`,
+							},
+						});
+					},
+				},
+			],
+			".condition",
+		);
+	}
+
+	static async toggleDescription(_, target) {
+		const container = target.closest("[data-item-id]");
+		const id = container.dataset.itemId;
+
+		if (this.expandedDescriptions.has(id)) {
+			this.expandedDescriptions.delete(id);
+			container.classList.remove("expanded");
+		} else {
+			this.expandedDescriptions.add(id);
+			container.classList.add("expanded");
+		}
+	}
 }

@@ -1,0 +1,23 @@
+{{#if list.length}}
+    <div>
+        <header class="bold black text-center condition-section">{{ title }}</header>
+        <div>
+        {{#each list}}
+            <article
+                class="
+                    gray
+                    condition
+                "
+                data-item-id="{{ id }}"
+            >
+                <header class="pointer text-center bold" data-action="toggleDescription">{{ name }}</header>
+                <div class="content">
+                    <div>
+                        <div>{{{ description }}}</div>
+                    </div>
+                </div>
+            </article>
+        {{/each}}
+        </div>
+    </div>
+{{/if}}

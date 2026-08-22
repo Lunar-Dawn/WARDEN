@@ -17,7 +17,7 @@ export class OpponentSheet extends BaseCharacterSheet {
 			check: OpponentSheet.check,
 			addAbility: OpponentSheet.addAbility,
 			deleteAbility: OpponentSheet.deleteAbility,
-			toggleDescription: OpponentSheet.toggleDescription,
+			openItemForEditing: OpponentSheet.openItemForEditing,
 		},
 		window: {
 			contentClasses: ["zero-pad"],

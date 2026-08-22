@@ -27,6 +27,7 @@ export class CharacterSheet extends BaseCharacterSheet {
 			deleteKnowledgeSkill: CharacterSheet.deleteKnowledgeSkill,
 			check: CharacterSheet.check,
 			toggleDescription: CharacterSheet.toggleDescription,
+			openItemForEditing: CharacterSheet.openItemForEditing,
 		},
 		window: {
 			contentClasses: ["zero-pad"],

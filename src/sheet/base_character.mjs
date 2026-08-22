@@ -103,6 +103,14 @@ export class BaseCharacterSheet extends HandlebarsApplicationMixin(ActorSheet) {
 		);
 	}
 
+	
+
+	static async openItemForEditing(_, target) {
+		const container = target.closest("[data-item-id]");
+		const id = container.dataset.itemId;
+		this.actor.items.get(id).sheet.render(true);
+	}
+	
 	static async toggleDescription(_, target) {
 		const container = target.closest("[data-item-id]");
 		const id = container.dataset.itemId;

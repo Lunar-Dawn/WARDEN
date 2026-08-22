@@ -9,13 +9,9 @@
                     condition
                 "
                 data-item-id="{{ id }}"
+                data-tooltip-html="{{ description }}"
             >
-                <header class="pointer text-center bold" data-action="toggleDescription">{{ name }}</header>
-                <div class="content">
-                    <div>
-                        <div>{{{ description }}}</div>
-                    </div>
-                </div>
+                <header class="pointer text-center bold" data-action="openItemForEditing">{{ name }}</header>
             </article>
         {{/each}}
         </div>

@@ -1,4 +1,4 @@
-const { HTMLField, StringField } = foundry.data.fields;
+const { HTMLField, StringField, NumberField } = foundry.data.fields;
 const { TypeDataModel } = foundry.abstract;
 
 /**
@@ -32,6 +32,12 @@ export class Condition extends TypeDataModel {
 					permanent: "warden.condition.type.permanent"
 				},
 			}),
+			timer: new NumberField({
+				required: true,
+				initial: 0,
+				min: 0,
+				integer: true,
+			}),
 		};
 	}
 
@@ -53,6 +59,10 @@ export class Condition extends TypeDataModel {
 		properties.type = {
 			field: this.schema.fields.type,
 			value: this.type,
+		};
+		properties.timer = {
+			field: this.schema.fields.timer,
+			value: this.timer,
 		};
 
 		return properties;

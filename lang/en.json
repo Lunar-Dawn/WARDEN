@@ -349,6 +349,9 @@
 				},
 				"type": {
 					"label": "Type"
+				},
+				"timer": {
+					"label": "Timer"
 				}
 			},
 			"variant": {

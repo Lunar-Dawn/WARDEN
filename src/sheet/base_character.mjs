@@ -18,6 +18,7 @@ export class BaseCharacterSheet extends HandlebarsApplicationMixin(ActorSheet) {
 				name: a.name,
                 variant: a.system.variant,
                 type: a.system.type,
+				timer: a.system.type === "temporary" ? a.system.timer : undefined,
 				expanded: this.expandedDescriptions.has(a.id),
 				description:
 					await foundry.applications.ux.TextEditor.implementation.enrichHTML(

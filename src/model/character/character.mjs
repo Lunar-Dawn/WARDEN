@@ -617,6 +617,17 @@ export class CharacterData extends BaseCharacterData {
 			value: "@profCalc",
 		});
 
+		this.dynamic_effects.penalty.push({
+			label: "Heavy Items",
+			domains: new Set(["skill.mobility"]),
+			defaultEnabled: true,
+
+			modifier_type: "universal",
+
+			mode: "add",
+			value: this.parent.items.filter(x => x.system.weight && (x.system.weight == "heavy" || x.system.weight == "huge")).length,
+		});
+
 		this.dynamic_effects.bonus.push({
 			label: "Base Hit Points",
 			domains: new Set(["hit_points"]),

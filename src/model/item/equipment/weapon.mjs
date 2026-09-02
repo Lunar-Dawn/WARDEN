@@ -125,7 +125,7 @@ export class Weapon extends BaseEquipment {
 		});
 	}
 
-	#weaponResolver(map) {
+	#weaponResolver(map, extra_domains = [], extra_discriminators = []) {
 		const domains = new Set([
 			"strike",
 			"strike.attack",
@@ -143,13 +143,20 @@ export class Weapon extends BaseEquipment {
 			discriminators.add("map");
 		}
 
+		extra_domains.forEach(extra_domain => {
+			domains.add(extra_domain);
+		});
+		extra_discriminators.forEach(extra_discriminator => {
+			discriminators.add(extra_discriminator);
+		});
+
 		return this.parent.actor.system.proficiencyCheckResolver("combat", {
 			domains,
 			discriminators,
 		});
 	}
 
-	runStrike({ skip = false, map = 0 }) {
+	runStrike({ skip = false, map = 0, extra_domains = [], extra_discriminators = []}) {
 		const rollData = this.parent.actor.getRollData();
 		const speaker = ChatMessage.getSpeaker({
 			actor: this.parent.actor,
@@ -168,7 +175,7 @@ export class Weapon extends BaseEquipment {
 			});
 		}
 
-		const resolver = this.#weaponResolver(map);
+		const resolver = this.#weaponResolver(map, extra_domains, extra_discriminators);
 
 		return runCheck(
 			rollData,
@@ -182,7 +189,7 @@ export class Weapon extends BaseEquipment {
 		);
 	}
 
-	rollDamage({ skip = false, map = 0 }) {
+	rollDamage({ skip = false, map = 0, extra_domains = [], extra_discriminators = [] }) {
 		const rollData = this.parent.actor.getRollData();
 		const speaker = ChatMessage.getSpeaker({
 			actor: this.parent.actor,
@@ -216,6 +223,13 @@ export class Weapon extends BaseEquipment {
 		if (map > 0) {
 			discriminators.add("map");
 		}
+
+		extra_domains.forEach(extra_domain => {
+			domains.add(extra_domain);
+		});
+		extra_discriminators.forEach(extra_discriminator => {
+			discriminators.add(extra_discriminator);
+		});
 
 		const resolver = this.parent.actor.system.getDynamicResultResolver(
 			domains,
@@ -257,6 +271,18 @@ export class Weapon extends BaseEquipment {
 			{
 				label: _loc("warden.weapon.damage_button"),
 				onClick: (e) => this.rollDamage({ skip: e.shiftKey, map: 0 }),
+			},
+			{
+				label: _loc("warden.weapon.damage_map_button"),
+				onClick: (e) => this.rollDamage({ skip: e.shiftKey, map: 1 }),
+			},
+			{
+				label: _loc("warden.weapon.damage_crit_button"),
+				onClick: (e) => this.rollDamage({ skip: e.shiftKey, map: 0, extra_discriminators: ["crit"] }),
+			},
+			{
+				label: _loc("warden.weapon.damage_crit_map_button"),
+				onClick: (e) => this.rollDamage({ skip: e.shiftKey, map: 1, extra_discriminators: ["crit"] }),
 			},
 		];
 	}

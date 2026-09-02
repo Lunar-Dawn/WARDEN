@@ -271,7 +271,10 @@
 			"range": {
 				"label": "Range"
 			},
-			"damage_button": "Damage",
+			"damage_button": "Dmg",
+			"damage_map_button": "+ MAP",
+			"damage_crit_button": "Crit",
+			"damage_crit_map_button": "+ MAP",
 			"damage_flavor": "Weapon Damage ({weapon})"
 		},
 		"apparel": {

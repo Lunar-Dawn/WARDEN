@@ -149,8 +149,14 @@ export class CharacterSheet extends BaseCharacterSheet {
 			.slice(0, 2)
 			.forEach((o) => registeredItems.add(o.id));
 
-		[...context.conditions.permanent, ...context.conditions.persistent, ...context.conditions.temporary,
-			...context.warden_active_effects.permanent, ...context.warden_active_effects.persistent, ...context.warden_active_effects.temporary]
+		[
+			...context.conditions.permanent,
+			...context.conditions.persistent,
+			...context.conditions.temporary,
+			...context.warden_active_effects.permanent,
+			...context.warden_active_effects.persistent,
+			...context.warden_active_effects.temporary,
+		]
 			.flat()
 			.filter((i) => i !== null)
 			.forEach((i) => registeredItems.add(i.id));

@@ -5,9 +5,7 @@ export class OpponentSheet extends BaseCharacterSheet {
 	static PARTS = {
 		main: {
 			template: "systems/warden/static/sheets/opponent-sheet.hbs",
-			templates: [
-				"systems/warden/static/partials/condition-display.hbs",
-			],
+			templates: ["systems/warden/static/partials/condition-display.hbs"],
 		},
 	};
 

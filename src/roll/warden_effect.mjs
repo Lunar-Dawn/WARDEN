@@ -1,7 +1,7 @@
 export class WardenEffect extends Roll {
 	constructor(formula, data, options) {
 		super(formula, data, options);
-		
+
 		this.modifiers = options.modifiers;
 	}
 

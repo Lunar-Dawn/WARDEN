@@ -76,7 +76,7 @@ export class CommonManager {
 	get formula() {
 		return "d1 #replacethis";
 	}
-};
+}
 
 const PATH_ORDER = {
 	effect_dice: 0,
@@ -84,8 +84,8 @@ const PATH_ORDER = {
 	effect_potency: 2,
 	effect_damage_type: 3,
 	bonus: 4,
-	penalty: 5
-}
+	penalty: 5,
+};
 
 const TYPES_ORDER = {
 	universal: 0,
@@ -174,7 +174,14 @@ export const transformEffectsForDisplay = (effects, resolver) => {
 			enabled: e.enabled,
 		})) ?? [];
 
-	const modifiers = [...annotatedBonuses, ...annotatedPenalties, ...annotatedDice, ...annotatedDieSize, ...annotatedPotency, ...annotatedDamageType];
+	const modifiers = [
+		...annotatedBonuses,
+		...annotatedPenalties,
+		...annotatedDice,
+		...annotatedDieSize,
+		...annotatedPotency,
+		...annotatedDamageType,
+	];
 
 	modifiers.sort(modifierSort);
 

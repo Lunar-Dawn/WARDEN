@@ -435,10 +435,13 @@ export class CharacterData extends BaseCharacterData {
 		this.#prepareBaseDynamicEffects();
 		this.calculateBasicStats();
 	}
-	calculateBasicStats(){
+	calculateBasicStats() {
 		// Hit Points
 		{
-			const resolver = this.otherResolver({domains: ["hit_points"], discriminators: []});
+			const resolver = this.otherResolver({
+				domains: ["hit_points"],
+				discriminators: [],
+			});
 			const bonus = resolver.modifierSum();
 
 			this.hit_points.max = bonus;
@@ -450,21 +453,27 @@ export class CharacterData extends BaseCharacterData {
 
 		// Strain Points
 		{
-			const resolver = this.otherResolver({domains: ["strain_points"], discriminators: []});
+			const resolver = this.otherResolver({
+				domains: ["strain_points"],
+				discriminators: [],
+			});
 			const bonus = resolver.modifierSum();
 
 			this.strain.max = bonus;
-			this.strain.value = Math.min(
-				this.strain.value,
-				this.strain.max,
-			);
+			this.strain.value = Math.min(this.strain.value, this.strain.max);
 		}
 
 		// Speed
 		{
-			const speed_resolver = this.otherResolver({domains: ["speed"], discriminators: []});
+			const speed_resolver = this.otherResolver({
+				domains: ["speed"],
+				discriminators: [],
+			});
 			const speed_bonus = speed_resolver.modifierSum();
-			const base_speed_resolver = this.otherResolver({domains: ["base_speed"], discriminators: []});
+			const base_speed_resolver = this.otherResolver({
+				domains: ["base_speed"],
+				discriminators: [],
+			});
 			const base_speed_bonus = base_speed_resolver.modifierSum();
 
 			this.speed = {};
@@ -631,7 +640,11 @@ export class CharacterData extends BaseCharacterData {
 			modifier_type: "universal",
 
 			mode: "add",
-			value: this.parent.items.filter(x => x.system.weight && (x.system.weight == "heavy" || x.system.weight == "huge")).length,
+			value: this.parent.items.filter(
+				(x) =>
+					x.system.weight &&
+					(x.system.weight == "heavy" || x.system.weight == "huge"),
+			).length,
 		});
 	}
 	#prepareStatisticDynamicEffects() {
@@ -675,27 +688,27 @@ export class CharacterData extends BaseCharacterData {
 			modifier_type: "universal",
 
 			mode: "add",
-			value: this.path.combat.rank
+			value: this.path.combat.rank,
 		});
 		this.dynamic_effects.effect_die_size.push({
 			label: "Base Strike Die Size",
 			domains: new Set(["strike.damage"]),
 			defaultEnabled: true,
-			
+
 			modifier_type: "universal",
-			
+
 			mode: "upgrade",
-			value: 4
+			value: 4,
 		});
 		this.dynamic_effects.effect_potency.push({
 			label: "Base Strike Potency",
 			domains: new Set(["strike.damage"]),
 			defaultEnabled: true,
-			
+
 			modifier_type: "universal",
-			
+
 			mode: "add",
-			value: 1
+			value: 1,
 		});
 
 		this.dynamic_effects.proficiency_rank.push({
@@ -719,7 +732,7 @@ export class CharacterData extends BaseCharacterData {
 
 			mode: "upgrade",
 			value: "@profCalc",
-		});		
+		});
 	}
 
 	// TODO: add effect parameter for all of these when the system's worked out
@@ -762,10 +775,10 @@ export class CharacterData extends BaseCharacterData {
 
 	/**
 	 * Parameters to resolve other data, that don't necessarily have to be checks.
-	 * 
+	 *
 	 * @param {string[]|Set<string>} domains - Domains for this resolving.
 	 * @param {string[]|Set<string>} discriminators - Discriminators for this resolving.
-	 * 
+	 *
 	 * @returns DynamicResultResolver
 	 */
 	otherResolver({ domains = [], discriminators = [] } = {}) {

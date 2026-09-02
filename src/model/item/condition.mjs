@@ -29,7 +29,7 @@ export class Condition extends TypeDataModel {
 				choices: {
 					temporary: "warden.condition.type.temporary",
 					persistent: "warden.condition.type.persistent",
-					permanent: "warden.condition.type.permanent"
+					permanent: "warden.condition.type.permanent",
 				},
 			}),
 			timer: new NumberField({

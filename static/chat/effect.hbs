@@ -9,11 +9,7 @@
 
 			{{#each modifiers}}
 				<span class="modifier">
-					{{~warden-prettify-modifier
-						value
-						prefix
-						postfix
-					~}}:{{#if label.length}}
+					{{~warden-prettify-modifier value prefix postfix ~}}:{{#if label.length}}
 						{{ label }}
 					{{else}}
 						{{localize (concat "warden.roll.unnamed_modifier." modifier_type)}}

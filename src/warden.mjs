@@ -94,9 +94,7 @@ Hooks.once("init", () => {
 	});
 
 	DocumentSheetConfig.registerSheet(Item, "warden", ConditionSheet, {
-		types: [
-			"condition"
-		],
+		types: ["condition"],
 		makeDefault: true,
 		label: "warden.condition.sheet.label",
 	});

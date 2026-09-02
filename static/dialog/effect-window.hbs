@@ -7,13 +7,7 @@
 				data-path="{{ path }}"
 				data-index="{{ index }}"
 			>
-				<span class="text-right">
-					{{~warden-prettify-modifier
-						value
-						prefix
-						postfix
-					~}}
-				</span>
+				<span class="text-right">{{~warden-prettify-modifier value prefix postfix ~}}</span>
 				<span>{{ label }}</span>
 				{{#if pretty_type}}
 					<span class="text-center" title='{{localize (concat "warden.modifier_type." pretty_type)}}'>
@@ -51,5 +45,5 @@
 		</form>
 	</div>
 
-		<button class="col-span-4" data-action="execute">{{localize "warden.roll.effect_submit"}} {{ formula }}</button>
+	<button class="col-span-4" data-action="execute">{{localize "warden.roll.effect_submit"}} {{ formula }}</button>
 </section>

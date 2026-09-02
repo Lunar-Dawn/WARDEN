@@ -1,6 +1,13 @@
 import { DynamicResultResolver } from "../../dynamic_effects/resolver.mjs";
 
-const { AnyField, SchemaField, NumberField, ArrayField, SetField, DocumentIdField } = foundry.data.fields;
+const {
+	AnyField,
+	SchemaField,
+	NumberField,
+	ArrayField,
+	SetField,
+	DocumentIdField,
+} = foundry.data.fields;
 const { TypeDataModel } = foundry.abstract;
 
 /**
@@ -142,19 +149,19 @@ export class BaseCharacterData extends TypeDataModel {
 
 	/**
 	 * Returns a list of domains that describe the current status of the character.
-	 * 
+	 *
 	 * @param {string} prefix A custom prefix to differentiate domains. Defaults to `character`.
 	 * @returns {string[]} The relevant domains to the character.
 	 */
 	getDomains(prefix = "") {
 		const determined_prefix = prefix.length > 0 ? prefix : "character";
 
-		return []
+		return [];
 	}
 
 	/**
 	 * Returns a list of discriminators that describe the current status of the character.
-	 * 
+	 *
 	 * @param {string} prefix A custom prefix to differentiate discriminators. Defaults to `character`.
 	 * @returns {string[]} The relevant discriminators to the character.
 	 */
@@ -166,11 +173,11 @@ export class BaseCharacterData extends TypeDataModel {
 			`${determined_prefix}.level.${this.size}`,
 			`${determined_prefix}.hit_points.current.${this.hit_points.value}`,
 			`${determined_prefix}.hit_points.max.${this.hit_points.max}`,
-			`${determined_prefix}.hit_points.percent.${Math.round(this.hit_points.value / this.hit_points.max * 100)}`,
+			`${determined_prefix}.hit_points.percent.${Math.round((this.hit_points.value / this.hit_points.max) * 100)}`,
 			`${determined_prefix}.strain.current.${this.strain.value}`,
 			`${determined_prefix}.strain.max.${this.strain.max}`,
-			`${determined_prefix}.strain.percent.${Math.round(this.strain.value / this.strain.max * 100)}`
-		]
+			`${determined_prefix}.strain.percent.${Math.round((this.strain.value / this.strain.max) * 100)}`,
+		];
 	}
 
 	/**
@@ -181,13 +188,23 @@ export class BaseCharacterData extends TypeDataModel {
 	 */
 	getDynamicResultResolver(domains, discriminators = []) {
 		const target = game.user.targets.first()?.actor.system;
-		
-		const targetDomains = target !== undefined ? target.getDomains("target") : [];
-		const raw_domains = [...domains, ...this.getDomains(), ...targetDomains];
+
+		const targetDomains =
+			target !== undefined ? target.getDomains("target") : [];
+		const raw_domains = [
+			...domains,
+			...this.getDomains(),
+			...targetDomains,
+		];
 		const domain_set = new Set(raw_domains);
-		
-		const targetDiscriminators = target !== undefined ? target.getDiscriminators("target") : [];
-		const raw_discriminators = [...discriminators, ...this.getDiscriminators(), ...targetDiscriminators];
+
+		const targetDiscriminators =
+			target !== undefined ? target.getDiscriminators("target") : [];
+		const raw_discriminators = [
+			...discriminators,
+			...this.getDiscriminators(),
+			...targetDiscriminators,
+		];
 		const discriminator_set = new Set(raw_discriminators);
 
 		const filtered_effects = {};
@@ -211,7 +228,7 @@ export class BaseCharacterData extends TypeDataModel {
 			filtered_effects,
 			{
 				origin: this,
-				target
+				target,
 			},
 		);
 	}

@@ -1,5 +1,8 @@
 import { EffectWindow } from "../dialog/effect.mjs";
-import { CommonManager, transformEffectsForDisplay } from "./common_manager.mjs";
+import {
+	CommonManager,
+	transformEffectsForDisplay,
+} from "./common_manager.mjs";
 import { WardenEffect } from "./warden_effect.mjs";
 
 /**
@@ -41,12 +44,13 @@ class EffectManager extends CommonManager {
 		const diceSum = this.resolver.calcNonTypeSums("effect_dice");
 		const dieSizeSum = this.resolver.calcNonTypeSums("effect_die_size");
 		const potencySum = this.resolver.calcNonTypeSums("effect_potency");
-		
+
 		const damageTypes = this.resolver.calcNonTypeSums("effect_damage_type");
 		const dmgTypesStr = damageTypes.length > 0 ? `[${damageTypes}]` : "";
 
 		const modSum = this.resolver.modifierSum();
-		const modStr = modSum === 0 ? "" : modSum < 0 ? modSum.toString() : `+${modSum}`;
+		const modStr =
+			modSum === 0 ? "" : modSum < 0 ? modSum.toString() : `+${modSum}`;
 
 		return `${diceSum}d${dieSizeSum}kh${potencySum}${modStr}${dmgTypesStr}`;
 	}

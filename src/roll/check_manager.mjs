@@ -1,5 +1,8 @@
 import { CheckWindow } from "../dialog/check.mjs";
-import { CommonManager, transformEffectsForDisplay } from "./common_manager.mjs";
+import {
+	CommonManager,
+	transformEffectsForDisplay,
+} from "./common_manager.mjs";
 import { WardenCheck } from "./warden_check.mjs";
 
 /**

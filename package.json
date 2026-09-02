@@ -1,0 +1,28 @@
+{
+	"name": "warden",
+	"version": "0.0.5",
+	"description": "A FoundryVTT implementation of the WARDEN system.",
+	"homepage": "https://github.com/Lunar-Dawn/WARDEN#readme",
+	"bugs": {
+		"url": "https://github.com/Lunar-Dawn/WARDEN/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Lunar-Dawn/WARDEN.git"
+	},
+	"license": "MIT",
+	"author": "",
+	"scripts": {
+		"prepare": "husky",
+		"format": "prettier --write ."
+	},
+	"devDependencies": {
+		"globals": "^17.12.0",
+		"husky": "^9.1.7",
+		"lint-staged": "^17.4.1",
+		"prettier": "3.9.6"
+	},
+	"lint-staged": {
+		"**/*.{mjs,hbs,json,css,md}": "prettier --write --ignore-unknown"
+	}
+}

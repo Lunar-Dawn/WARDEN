@@ -1,3 +1,7 @@
+/**
+ * @typedef {"proficiency_rank" | "bonus" | "penalty" | "effect_dice" | "effect_die_size" | "effect_potency" | "effect_damage_type" | "benefit" | "detriment"} DynamicEffectType
+ */
+
 export class DynamicResultResolver {
 	/**
 	 * @param {Set<string>} domains
@@ -29,13 +33,16 @@ export class DynamicResultResolver {
 		);
 	}
 
+	calcNonTypeSums(type) {
+		this.#resolveType(type);
+		return this.results[type];
+	}
+
 	#calcModifierSum(type) {
+		this.#resolveType(type);
 		return Object.values(this.results[type]).reduce((a, b) => a + b, 0);
 	}
 	modifierSum() {
-		this.#resolveType("bonus");
-		this.#resolveType("penalty");
-
 		return (
 			this.#calcModifierSum("bonus") - this.#calcModifierSum("penalty")
 		);
@@ -59,7 +66,9 @@ export class DynamicResultResolver {
 		this.#resolveType("penalty");
 
 		this.#resolveType("effect_dice");
+		this.#resolveType("effect_die_size");
 		this.#resolveType("effect_potency");
+		this.#resolveType("effect_damage_type");
 
 		this.#resolveType("benefit");
 		this.#resolveType("detriment");
@@ -73,9 +82,9 @@ export class DynamicResultResolver {
 				// Very special case here
 				const rank = this.#resolveType("proficiency_rank");
 				if (rank > 0) {
-					return rank + this.data.level;
+					return rank + this.data.origin.level;
 				} else {
-					return Math.floor(this.data.level / 2);
+					return Math.min(Math.floor(this.data.origin.level / 2), 10);
 				}
 			}
 
@@ -96,6 +105,8 @@ export class DynamicResultResolver {
 					status: 0,
 					circumstance: 0,
 				};
+			case "effect_damage_type":
+				return "";
 			default:
 				return 0;
 		}

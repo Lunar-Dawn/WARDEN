@@ -1,10 +1,8 @@
 import { BaseEquipment } from "../model/item/equipment/base_equipment.mjs";
 import { runCheck } from "../roll/check_manager.mjs";
+import { BaseCharacterSheet } from "./base_character.mjs";
 
-const { HandlebarsApplicationMixin } = foundry.applications.api;
-const { ActorSheet } = foundry.applications.sheets;
-
-export class CharacterSheet extends HandlebarsApplicationMixin(ActorSheet) {
+export class CharacterSheet extends BaseCharacterSheet {
 	static PARTS = {
 		main: {
 			template: "systems/warden/static/sheets/character-sheet.hbs",
@@ -13,6 +11,7 @@ export class CharacterSheet extends HandlebarsApplicationMixin(ActorSheet) {
 				"systems/warden/static/partials/proficiency-display.hbs",
 				"systems/warden/static/partials/skill-display.hbs",
 				"systems/warden/static/partials/knowledge-skill-display.hbs",
+				"systems/warden/static/partials/condition-display.hbs",
 			],
 		},
 	};
@@ -27,7 +26,8 @@ export class CharacterSheet extends HandlebarsApplicationMixin(ActorSheet) {
 			addKnowledgeSkill: CharacterSheet.addKnowledgeSkill,
 			deleteKnowledgeSkill: CharacterSheet.deleteKnowledgeSkill,
 			check: CharacterSheet.check,
-			toggleDescription: CharacterSheet.#toggleDescription,
+			toggleDescription: CharacterSheet.toggleDescription,
+			openItemForEditing: CharacterSheet.openItemForEditing,
 		},
 		window: {
 			contentClasses: ["zero-pad"],
@@ -40,18 +40,11 @@ export class CharacterSheet extends HandlebarsApplicationMixin(ActorSheet) {
 		},
 	};
 
-	expandedDescriptions = new Set();
-
 	async _prepareContext(options) {
 		const context = await super._prepareContext(options);
 
-		const actor = this.actor;
-		const system = actor.system;
-
-		context.actor = actor;
-		context.system = system;
-
-		context.fields = system.schema.fields;
+		const system = context.system;
+		const actor = context.actor;
 
 		context.kit = system.kit;
 
@@ -87,6 +80,9 @@ export class CharacterSheet extends HandlebarsApplicationMixin(ActorSheet) {
 				`defense.${name}`,
 			);
 		}
+
+		// Gimmick-ass solution
+		system.calculateBasicStats();
 
 		context.skill = {};
 		for (const [name, data] of Object.entries(system.skill)) {
@@ -152,6 +148,12 @@ export class CharacterSheet extends HandlebarsApplicationMixin(ActorSheet) {
 		context.system.origins
 			.slice(0, 2)
 			.forEach((o) => registeredItems.add(o.id));
+
+		[...context.conditions.permanent, ...context.conditions.persistent, ...context.conditions.temporary,
+			...context.warden_active_effects.permanent, ...context.warden_active_effects.persistent, ...context.warden_active_effects.temporary]
+			.flat()
+			.filter((i) => i !== null)
+			.forEach((i) => registeredItems.add(i.id));
 
 		context.abilities.forEach((ability) => {
 			registeredItems.add(ability.id);
@@ -489,18 +491,5 @@ export class CharacterSheet extends HandlebarsApplicationMixin(ActorSheet) {
 		return runCheck(rollData, speaker, resolver, parameters, {
 			skip: e.shiftKey,
 		});
-	}
-
-	static async #toggleDescription(_, target) {
-		const container = target.closest("[data-item-id]");
-		const id = container.dataset.itemId;
-
-		if (this.expandedDescriptions.has(id)) {
-			this.expandedDescriptions.delete(id);
-			container.classList.remove("expanded");
-		} else {
-			this.expandedDescriptions.add(id);
-			container.classList.add("expanded");
-		}
 	}
 }

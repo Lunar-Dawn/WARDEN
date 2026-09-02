@@ -1,0 +1,19 @@
+{{#if list.length}}
+    <div>
+        <header class="bold black text-center condition-section">{{ title }}</header>
+        <div>
+        {{#each list}}
+            <article
+                class="
+                    gray
+                    condition
+                "
+                data-item-id="{{ id }}"
+                data-tooltip-html="{{ description }}"
+            >
+                <header class="pointer text-center bold" data-action="openItemForEditing">{{ name }} {{#if timer}}{{ timer }}{{/if}}</header>
+            </article>
+        {{/each}}
+        </div>
+    </div>
+{{/if}}

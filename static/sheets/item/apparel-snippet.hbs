@@ -2,14 +2,14 @@
 	<div class="col-span-2">{{localize "warden.apparel.armor.label"}}: {{ apparel.armor }}</div>
 	<div>
 		{{localize "warden.apparel.strength.short_label"}}:{{#if apparel.strength.size}}
-			{{#each apparel.strength}}{{ this }} {{#unless @last}},{{/unless}}{{/each}}
+			{{#each apparel.strength}}{{ this }}{{#unless @last}}, {{/unless}}{{/each}}
 		{{else}}
 			&mdash;
 		{{/if}}
 	</div>
 	<div>
 		{{localize "warden.apparel.weakness.short_label"}}:{{#if apparel.weakness.size}}
-			{{#each apparel.weakness}}{{ this }} {{#unless @last}},{{/unless}}{{/each}}
+			{{#each apparel.weakness}}{{ this }}{{#unless @last}}, {{/unless}}{{/each}}
 		{{else}}
 			&mdash;
 		{{/if}}

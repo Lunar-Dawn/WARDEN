@@ -116,6 +116,16 @@ export class BaseEquipment extends TypeDataModel {
 		return true;
 	}
 
+	registerNewDynamicEffect(effect_location, effect) {
+		if (!!this.parent && 
+			!!this.parent.actor && 
+			!!this.parent.actor.system && 
+			!!this.parent.actor.system.dynamic_effects && 
+			!!this.parent.actor.system.dynamic_effects[effect_location]) {
+			this.parent.actor.system.dynamic_effects[effect_location].push(effect);
+		}
+	}
+
 	get supportedTabs() {
 		return ["description", "properties", "traits", "effects"];
 	}

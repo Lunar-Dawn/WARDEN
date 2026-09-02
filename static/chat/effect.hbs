@@ -4,6 +4,24 @@
 			{{ flavor }}
 		</div>
 	{{/if}}
+	{{#if modifiers.length}}
+		<div class="modifiers">
+
+			{{#each modifiers}}
+				<span class="modifier">
+					{{~warden-prettify-modifier
+						value
+						prefix
+						postfix
+					~}}:{{#if label.length}}
+						{{ label }}
+					{{else}}
+						{{localize (concat "warden.roll.unnamed_modifier." modifier_type)}}
+					{{/if}}
+				</span>
+			{{/each}}
+		</div>
+	{{/if}}
 	<div class="dice-result">
 		<div class="dice-formula">{{ formula }}</div>
 		{{{ tooltip }}}

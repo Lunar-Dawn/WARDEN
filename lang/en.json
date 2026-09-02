@@ -14,7 +14,9 @@
 
 			"origin": "Origin",
 			"ability": "Ability",
-			"feat": "Feat"
+			"feat": "Feat",
+
+			"condition": "Condition / WARDEN Active Effect"
 		}
 	},
 	"warden": {
@@ -24,6 +26,7 @@
 				"equipment": "Equipment",
 				"pockets": "Pockets",
 				"pack": "Pack",
+				"statistics": "Statistics",
 
 				"origin": "Origin",
 
@@ -49,6 +52,7 @@
 
 			"name": "Character name",
 			"hit_points": "Hit Points",
+			"temporary_hit_points": "Temporary HP",
 			"strain": "Strain",
 
 			"speed": "Speed",
@@ -267,7 +271,10 @@
 			"range": {
 				"label": "Range"
 			},
-			"damage_button": "Damage",
+			"damage_button": "Dmg",
+			"damage_map_button": "+ MAP",
+			"damage_crit_button": "Crit",
+			"damage_crit_map_button": "+ MAP",
 			"damage_flavor": "Weapon Damage ({weapon})"
 		},
 		"apparel": {
@@ -329,19 +336,61 @@
 			}
 		},
 
+		"condition": {
+			"sheet": {
+				"label": "WARDEN Condition / Active Effect Sheet"
+			},
+			"FIELDS": {
+				"description": {
+					"label": "Description"
+				},
+				"slug": {
+					"label": "Slug identifier"
+				},
+				"variant": {
+					"label": "Variant"
+				},
+				"type": {
+					"label": "Type"
+				},
+				"timer": {
+					"label": "Timer"
+				}
+			},
+			"variant": {
+				"condition": "Condition",
+				"active_effect": "Active Effect"
+			},
+			"type": {
+				"temporary": "Temporary",
+				"persistent": "Persistent",
+				"permanent": "Permanent"
+			}
+		},
+
 		"modifier_type": {
 			"universal": "Universal",
 			"proficiency": "Proficiency",
 			"item": "Item",
 			"status": "Status",
-			"circumstance": "Circumstance"
+			"circumstance": "Circumstance",
+
+			"effect_dice": "Dice",
+			"effect_die_size": "Die Size",
+			"effect_potency": "Potency",
+			"effect_damage_type": "Damage Type"
 		},
 		"modifier_type_abbr": {
 			"universal": "UNIV",
 			"proficiency": "PROF",
 			"item": "ITEM",
 			"status": "STAT",
-			"circumstance": "CIRC"
+			"circumstance": "CIRC",
+
+			"effect_dice": "Dice",
+			"effect_die_size": "DieSize",
+			"effect_potency": "Potency",
+			"effect_damage_type": "DmgType"
 		},
 
 		"check_label": "{type} Check",

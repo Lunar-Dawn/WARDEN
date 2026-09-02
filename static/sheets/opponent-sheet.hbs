@@ -154,4 +154,32 @@
 		</div>
 	</div>
 
+	<section class="col-span-2 gray subheader grid place-center">Conditions / Effects</section>
+	<div class="col-span-2 condition-wrapper" style="min-height: 10em">
+		{{> "systems/warden/static/partials/condition-display.hbs"
+			list=conditions.temporary
+			title="Temporary Conditions"
+		}}
+		{{> "systems/warden/static/partials/condition-display.hbs"
+			list=conditions.persistent
+			title="Persistent Conditions"
+		}}
+		{{> "systems/warden/static/partials/condition-display.hbs"
+			list=conditions.permanent
+			title="Permanent Conditions"
+		}}
+		{{> "systems/warden/static/partials/condition-display.hbs"
+			list=warden_active_effects.temporary
+			title="Temporary Active Effects"
+		}}
+		{{> "systems/warden/static/partials/condition-display.hbs"
+			list=warden_active_effects.persistent
+			title="Persistent Active Effects"
+		}}
+		{{> "systems/warden/static/partials/condition-display.hbs"
+			list=warden_active_effects.permanent
+			title="Permanent Active Effects"
+		}}
+	</div>
+
 </section>

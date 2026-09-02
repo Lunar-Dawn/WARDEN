@@ -24,7 +24,9 @@
 
 			"origin": { "htmlFields": "description" },
 			"ability": { "htmlFields": "description" },
-			"feat": { "htmlFields": "description" }
+			"feat": { "htmlFields": "description" },
+
+			"condition": { "htmlFields": "description" }
 		}
 	},
 	"languages": [

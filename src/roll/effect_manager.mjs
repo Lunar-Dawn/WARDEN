@@ -1,4 +1,5 @@
 import { EffectWindow } from "../dialog/effect.mjs";
+import { CommonManager, transformEffectsForDisplay } from "./common_manager.mjs";
 import { WardenEffect } from "./warden_effect.mjs";
 
 /**
@@ -16,24 +17,20 @@ import { WardenEffect } from "./warden_effect.mjs";
  * @property {ChatSpeakerData} speaker - Who should the roll message originate from.
  * @property {EffectParameters} parameters - The parameters used for the roll.
  */
-class EffectManager {
+class EffectManager extends CommonManager {
 	/**
 	 * Create a CheckManager.
 	 * @param {object} rollData
 	 * @param {ChatSpeakerData} speaker
+	 * @param {DynamicResultResolver} resolver
 	 * @param {EffectParameters} parameters
 	 */
-	constructor(rollData, speaker, parameters = {}) {
-		this.rollData = rollData;
-		this.speaker = speaker;
-		this.parameters = parameters;
+	constructor(rollData, speaker, resolver, parameters) {
+		super(rollData, speaker, resolver, parameters);
+	}
 
-		this.parameters.num_dice ??= 1;
-		this.parameters.die_size ??= 6;
-		this.parameters.potency ??= 1;
-		this.parameters.modifier ??= 0;
-
-		this.#validateParameters();
+	get idDomainPrefix() {
+		return "effectroll";
 	}
 
 	/**
@@ -41,50 +38,34 @@ class EffectManager {
 	 * @returns {string} - The formula used for the roll.
 	 */
 	get formula() {
-		const mod = this.parameters.modifier;
-		const modStr = mod === 0 ? "" : mod < 0 ? mod.toString() : `+${mod}`;
+		const diceSum = this.resolver.calcNonTypeSums("effect_dice");
+		const dieSizeSum = this.resolver.calcNonTypeSums("effect_die_size");
+		const potencySum = this.resolver.calcNonTypeSums("effect_potency");
+		
+		const damageTypes = this.resolver.calcNonTypeSums("effect_damage_type");
+		const dmgTypesStr = damageTypes.length > 0 ? `[${damageTypes}]` : "";
 
-		return `${this.parameters.num_dice}d${this.parameters.die_size}kh${this.parameters.potency}${modStr}`;
+		const modSum = this.resolver.modifierSum();
+		const modStr = modSum === 0 ? "" : modSum < 0 ? modSum.toString() : `+${modSum}`;
+
+		return `${diceSum}d${dieSizeSum}kh${potencySum}${modStr}${dmgTypesStr}`;
 	}
 
 	async display() {
 		return EffectWindow.wait(this, {});
 	}
 
-	setNumDice(num_dice) {
-		this.parameters.num_dice = num_dice;
-		this.#validateParameters();
-	}
-	setDieSize(die_size) {
-		this.parameters.die_size = die_size;
-		this.#validateParameters();
-	}
-	setPotency(potency) {
-		this.parameters.potency = potency;
-		this.#validateParameters();
-	}
-	setModifier(modifier) {
-		this.parameters.modifier = modifier;
-		this.#validateParameters();
-	}
-	#validateParameters() {
-		if (this.parameters.num_dice > 5) {
-			this.parameters.modifier += this.parameters.num_dice - 5;
-		}
-
-		this.parameters.num_dice = Math.clamp(this.parameters.num_dice, 1, 5);
-		this.parameters.die_size = Math.clamp(this.parameters.die_size, 4, 12);
-		this.parameters.potency = Math.clamp(
-			this.parameters.potency,
-			1,
-			this.parameters.num_dice,
-		);
-	}
-
 	async evaluateEffect() {
+		this.resolver.resolveAll();
+
 		const rollMode = game.settings.get("core", "messageMode");
 
-		this.roll = new WardenEffect(this.formula, this.rollData, {});
+		this.roll = new WardenEffect(this.formula, this.rollData, {
+			modifiers: transformEffectsForDisplay(
+				this.resolver.appliedEffects,
+				this.resolver,
+			),
+		});
 
 		await this.roll.evaluate();
 
@@ -108,10 +89,11 @@ class EffectManager {
 export const runEffect = async (
 	rollData,
 	speaker,
+	resolver,
 	parameters,
 	{ skip = false } = {},
 ) => {
-	const manager = new EffectManager(rollData, speaker, parameters);
+	const manager = new EffectManager(rollData, speaker, resolver, parameters);
 
 	if (!skip) {
 		const success = await manager.display();

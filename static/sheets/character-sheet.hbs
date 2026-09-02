@@ -159,18 +159,15 @@
 			<label>{{localize "warden.character.strain"}}</label>
 		</div>
 
-		<!-- These two are pretty weird right now -->
 		<div class="grid row-subgrid row-span-2">
 			<div class="slashed value-border flex">
-				<div>{{ system.speed.value }}</div>
-				<div class="divider"></div>
-				<div>{{ system.speed.base }}</div>
+				{{formInput
+					fields.temporary_hit_points
+					value=system.temporary_hit_points
+					type="number"
+				}}
 			</div>
-			<label>{{localize "warden.character.speed"}}</label>
-		</div>
-		<div class="grid row-subgrid row-span-2">
-			<div class="value-border grid place-center">{{localize (warden-size-loc-key system.size)}}</div>
-			<label>{{localize "warden.character.size.label"}}</label>
+			<label>{{localize "warden.character.temporary_hit_points"}}</label>
 		</div>
 	</section>
 
@@ -385,13 +382,52 @@
 				<button data-action="addKnowledgeSkill"><i class="fa-solid fa-plus"></i></button>
 			</div>
 		</section>
-	</div>
 
-	<!-- TODO: Put this somewhere (likely move speed & size somewhere else and put this there)
-	{{formGroup
-		fields.temporary_hit_points
-		value=system.temporary_hit_points
-		type="number"
-	}}
-	-->
+		<section class="grid col-subgrid col-span-2">
+			<header class="black text-center bold col-span-2">{{localize "warden.character.sheet.statistics"}}</header>
+			<div class="statistic-wrapper white col-span-2 text-center">
+				<!-- These two are pretty weird right now -->
+				<div class="grid row-subgrid row-span-2">
+					<div class="slashed value-border flex">
+						<div>{{ system.speed.value }}</div>
+						<div class="divider"></div>
+						<div>{{ system.speed.base }}</div>
+					</div>
+					<label>{{localize "warden.character.speed"}}</label>
+				</div>
+				<div class="grid row-subgrid row-span-2">
+					<div class="value-border grid place-center">{{localize (warden-size-loc-key system.size)}}</div>
+					<label>{{localize "warden.character.size.label"}}</label>
+				</div>
+			</div>
+		</section>
+
+		<section class="col-span-2 black header grid place-center">Conditions / Effects</section>
+		<div class="col-span-2 condition-wrapper">
+			{{> "systems/warden/static/partials/condition-display.hbs"
+				list=conditions.temporary
+				title="Temporary Conditions"
+			}}
+			{{> "systems/warden/static/partials/condition-display.hbs"
+				list=conditions.persistent
+				title="Persistent Conditions"
+			}}
+			{{> "systems/warden/static/partials/condition-display.hbs"
+				list=conditions.permanent
+				title="Permanent Conditions"
+			}}
+			{{> "systems/warden/static/partials/condition-display.hbs"
+				list=warden_active_effects.temporary
+				title="Temporary Active Effects"
+			}}
+			{{> "systems/warden/static/partials/condition-display.hbs"
+				list=warden_active_effects.persistent
+				title="Persistent Active Effects"
+			}}
+			{{> "systems/warden/static/partials/condition-display.hbs"
+				list=warden_active_effects.permanent
+				title="Permanent Active Effects"
+			}}
+		</div>
+	</div>
 </section>

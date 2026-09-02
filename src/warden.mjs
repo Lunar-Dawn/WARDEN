@@ -1,4 +1,3 @@
-import { setupRollButton } from "./chat_roll_buttons.mjs";
 import {
 	DAMAGE_CATEGORY_CHOICES,
 	DAMAGE_TYPE_CHOICES,
@@ -18,10 +17,12 @@ import { Kit } from "./model/item/equipment/kit.mjs";
 import { Shield } from "./model/item/equipment/shield.mjs";
 import { UtilityItem } from "./model/item/equipment/utility_item.mjs";
 import { Weapon } from "./model/item/equipment/weapon.mjs";
+import { Condition } from "./model/item/condition.mjs";
 import { WardenCheck } from "./roll/warden_check.mjs";
 import { WardenEffect } from "./roll/warden_effect.mjs";
 import { CharacterSheet } from "./sheet/character.mjs";
-import { EquipmentSheet } from "./sheet/item.mjs";
+import { EquipmentSheet } from "./sheet/equipment.mjs";
+import { ConditionSheet } from "./sheet/condition.mjs";
 import { OpponentSheet } from "./sheet/opponent.mjs";
 
 globalThis["WARDEN"] = {};
@@ -60,6 +61,8 @@ Hooks.once("init", () => {
 	CONFIG.Item.dataModels.ability = Ability;
 	CONFIG.Item.dataModels.feat = Feat;
 
+	CONFIG.Item.dataModels.condition = Condition;
+
 	CONFIG.Dice.rolls.push(WardenCheck);
 	CONFIG.Dice.rolls.push(WardenEffect);
 
@@ -90,8 +93,15 @@ Hooks.once("init", () => {
 		label: "warden.equipment.sheet.label",
 	});
 
+	DocumentSheetConfig.registerSheet(Item, "warden", ConditionSheet, {
+		types: [
+			"condition"
+		],
+		makeDefault: true,
+		label: "warden.condition.sheet.label",
+	});
+
 	registerHelpers();
-	setupRollButton();
 });
 
 Hooks.once("i18nInit", () => {

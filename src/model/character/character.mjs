@@ -236,7 +236,7 @@ export class CharacterData extends BaseCharacterData {
 	/**
 	 * Find out if a piece of equipment can be inserted in a specified area at a specified slot
 	 * @param {Item} item
-	 * @param {"kit"|"equipped"|"pockets"|"pack"} area
+	 * @param {"kit"|"equipped"|"pockets"|"pack"|"condition"} area
 	 * @return {true|string} Success or a warning message
 	 */
 	canAreaFitEquipment(item, area) {
@@ -430,24 +430,55 @@ export class CharacterData extends BaseCharacterData {
 	prepareDerivedData() {
 		super.prepareDerivedData();
 
-		this.hit_points.max = 10 + 2 * this.defense.toughness.rank;
-		this.hit_points.value = Math.min(
-			this.hit_points.value,
-			this.hit_points.max,
-		);
-
-		this.strain.max = 10 + 2 * this.defense.resolve.rank;
-		this.strain.value = Math.min(this.strain.value, this.strain.max);
-
-		this.speed = {};
-		this.speed.base = 5;
-		this.speed.value = this.speed.base;
-
 		this.wealth = Math.min(this.wealth, this.vocation.value);
 
 		this.#prepareBaseDynamicEffects();
+		this.calculateBasicStats();
 	}
+	calculateBasicStats(){
+		// Hit Points
+		{
+			const resolver = this.otherResolver({domains: ["hit_points"], discriminators: []});
+			const bonus = resolver.modifierSum();
+
+			this.hit_points.max = bonus;
+			this.hit_points.value = Math.min(
+				this.hit_points.value,
+				this.hit_points.max,
+			);
+		}
+
+		// Strain Points
+		{
+			const resolver = this.otherResolver({domains: ["strain_points"], discriminators: []});
+			const bonus = resolver.modifierSum();
+
+			this.strain.max = bonus;
+			this.strain.value = Math.min(
+				this.strain.value,
+				this.strain.max,
+			);
+		}
+
+		// Speed
+		{
+			const speed_resolver = this.otherResolver({domains: ["speed"], discriminators: []});
+			const speed_bonus = speed_resolver.modifierSum();
+			const base_speed_resolver = this.otherResolver({domains: ["base_speed"], discriminators: []});
+			const base_speed_bonus = base_speed_resolver.modifierSum();
+
+			this.speed = {};
+			this.speed.base = base_speed_bonus;
+			this.speed.value = this.speed.base + speed_bonus;
+		}
+	}
+
 	#prepareBaseDynamicEffects() {
+		this.#prepareCheckDynamicEffects();
+		this.#prepareStatisticDynamicEffects();
+		this.#prepareEffectRollDynamicEffects();
+	}
+	#prepareCheckDynamicEffects() {
 		this.dynamic_effects.proficiency_rank.push({
 			label: _loc("warden.proficiency_rank_label", {
 				type: _loc("warden.character.FIELDS.path.combat.label"),
@@ -528,7 +559,7 @@ export class CharacterData extends BaseCharacterData {
 			modifier_type: "proficiency",
 
 			mode: "upgrade",
-			value: this.level / 2,
+			value: Math.min(Math.floor(this.level / 2), 10),
 		});
 
 		this.dynamic_effects.bonus.push({
@@ -591,6 +622,104 @@ export class CharacterData extends BaseCharacterData {
 			mode: "upgrade",
 			value: "@profCalc",
 		});
+
+		this.dynamic_effects.penalty.push({
+			label: "Heavy Items",
+			domains: new Set(["skill.mobility"]),
+			defaultEnabled: true,
+
+			modifier_type: "universal",
+
+			mode: "add",
+			value: this.parent.items.filter(x => x.system.weight && (x.system.weight == "heavy" || x.system.weight == "huge")).length,
+		});
+	}
+	#prepareStatisticDynamicEffects() {
+		this.dynamic_effects.bonus.push({
+			label: "Base Hit Points",
+			domains: new Set(["hit_points"]),
+			defaultEnabled: true,
+
+			modifier_type: "proficiency",
+
+			mode: "upgrade",
+			value: 10 + this.defense.toughness.rank * 2,
+		});
+		this.dynamic_effects.bonus.push({
+			label: "Base Strain Points",
+			domains: new Set(["strain_points"]),
+			defaultEnabled: true,
+
+			modifier_type: "proficiency",
+
+			mode: "upgrade",
+			value: 10 + this.defense.resolve.rank * 2,
+		});
+		this.dynamic_effects.bonus.push({
+			label: "Base Speed",
+			domains: new Set(["base_speed"]),
+			defaultEnabled: true,
+
+			modifier_type: "proficiency",
+
+			mode: "upgrade",
+			value: 5,
+		});
+	}
+	#prepareEffectRollDynamicEffects() {
+		this.dynamic_effects.effect_dice.push({
+			label: "Base Strike Dice",
+			domains: new Set(["strike.damage"]),
+			defaultEnabled: true,
+
+			modifier_type: "universal",
+
+			mode: "add",
+			value: this.path.combat.rank
+		});
+		this.dynamic_effects.effect_die_size.push({
+			label: "Base Strike Die Size",
+			domains: new Set(["strike.damage"]),
+			defaultEnabled: true,
+			
+			modifier_type: "universal",
+			
+			mode: "upgrade",
+			value: 4
+		});
+		this.dynamic_effects.effect_potency.push({
+			label: "Base Strike Potency",
+			domains: new Set(["strike.damage"]),
+			defaultEnabled: true,
+			
+			modifier_type: "universal",
+			
+			mode: "add",
+			value: 1
+		});
+
+		this.dynamic_effects.proficiency_rank.push({
+			label: _loc("warden.proficiency_rank_label", {
+				type: _loc("warden.character.FIELDS.path.combat.label"),
+			}),
+			domains: new Set(["strike.damage"]),
+			applicable_if: ["strike.melee"],
+			defaultEnabled: true,
+
+			mode: "upgrade",
+			value: this.path.combat.rank,
+		});
+		this.dynamic_effects.bonus.push({
+			label: "Combat Proficiency",
+			domains: new Set(["strike.damage"]),
+			applicable_if: ["strike.melee"],
+			defaultEnabled: true,
+
+			modifier_type: "proficiency",
+
+			mode: "upgrade",
+			value: "@profCalc",
+		});		
 	}
 
 	// TODO: add effect parameter for all of these when the system's worked out
@@ -626,6 +755,22 @@ export class CharacterData extends BaseCharacterData {
 
 		if (proficiency_name === "skill") {
 			domains.add("skill-path");
+		}
+
+		return this.getDynamicResultResolver(domains, discriminators);
+	}
+
+	/**
+	 * Parameters to resolve other data, that don't necessarily have to be checks.
+	 * 
+	 * @param {string[]|Set<string>} domains - Domains for this resolving.
+	 * @param {string[]|Set<string>} discriminators - Discriminators for this resolving.
+	 * 
+	 * @returns DynamicResultResolver
+	 */
+	otherResolver({ domains = [], discriminators = [] } = {}) {
+		if (Array.isArray(domains)) {
+			domains = new Set(domains);
 		}
 
 		return this.getDynamicResultResolver(domains, discriminators);

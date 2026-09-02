@@ -45,12 +45,12 @@
 	</div>
 
 	<div class="difficulty-grid text-center">
-		<span class="pointer tl {{ifThen (eq difficulty 10) 'active' ''}}" data-action="setDifficulty" data-difficulty="10">{{localize "warden.roll.difficulty.standard"}}</span>
-		<span class="pointer {{ifThen (eq difficulty 15) 'active' ''}}" data-action="setDifficulty" data-difficulty="15">{{localize "warden.roll.difficulty.difficult"}}</span>
-		<span class="pointer {{ifThen (eq difficulty 20) 'active' ''}}" data-action="setDifficulty" data-difficulty="20">{{localize "warden.roll.difficulty.daunting"}}</span>
-		<span class="pointer {{ifThen (eq difficulty 25) 'active' ''}}" data-action="setDifficulty" data-difficulty="25">{{localize "warden.roll.difficulty.extreme"}}</span>
-		<span class="pointer tr {{ifThen (eq difficulty 30) 'active' ''}}" data-action="setDifficulty" data-difficulty="30">{{localize "warden.roll.difficulty.impossible"}}</span>
-		<span class="col-span-5 pointer b {{ifThen (eq difficulty 'open') 'active' ''}}" data-action="setDifficulty" data-difficulty="open">{{localize "warden.roll.difficulty.open"}}</span>
+		<span class="pointer tl {{ifThen (eq raw_difficulty 10) 'active' ''}}" data-action="setDifficulty" data-difficulty="10">{{localize "warden.roll.difficulty.standard"}}</span>
+		<span class="pointer {{ifThen (eq raw_difficulty 15) 'active' ''}}" data-action="setDifficulty" data-difficulty="15">{{localize "warden.roll.difficulty.difficult"}}</span>
+		<span class="pointer {{ifThen (eq raw_difficulty 20) 'active' ''}}" data-action="setDifficulty" data-difficulty="20">{{localize "warden.roll.difficulty.daunting"}}</span>
+		<span class="pointer {{ifThen (eq raw_difficulty 25) 'active' ''}}" data-action="setDifficulty" data-difficulty="25">{{localize "warden.roll.difficulty.extreme"}}</span>
+		<span class="pointer tr {{ifThen (eq raw_difficulty 30) 'active' ''}}" data-action="setDifficulty" data-difficulty="30">{{localize "warden.roll.difficulty.impossible"}}</span>
+		<span class="col-span-5 pointer b {{ifThen (eq raw_difficulty 'open') 'active' ''}}" data-action="setDifficulty" data-difficulty="open">{{localize "warden.roll.difficulty.open"}}</span>
 	</div>
 
 	{{#unless isOpen}}

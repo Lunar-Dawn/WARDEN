@@ -472,7 +472,13 @@ export class CharacterData extends BaseCharacterData {
 			this.speed.value = this.speed.base + speed_bonus;
 		}
 	}
+
 	#prepareBaseDynamicEffects() {
+		this.#prepareCheckDynamicEffects();
+		this.#prepareStatisticDynamicEffects();
+		this.#prepareEffectRollDynamicEffects();
+	}
+	#prepareCheckDynamicEffects() {
 		this.dynamic_effects.proficiency_rank.push({
 			label: _loc("warden.proficiency_rank_label", {
 				type: _loc("warden.character.FIELDS.path.combat.label"),
@@ -627,7 +633,8 @@ export class CharacterData extends BaseCharacterData {
 			mode: "add",
 			value: this.parent.items.filter(x => x.system.weight && (x.system.weight == "heavy" || x.system.weight == "huge")).length,
 		});
-
+	}
+	#prepareStatisticDynamicEffects() {
 		this.dynamic_effects.bonus.push({
 			label: "Base Hit Points",
 			domains: new Set(["hit_points"]),
@@ -658,6 +665,61 @@ export class CharacterData extends BaseCharacterData {
 			mode: "upgrade",
 			value: 5,
 		});
+	}
+	#prepareEffectRollDynamicEffects() {
+		this.dynamic_effects.effect_dice.push({
+			label: "Base Strike Dice",
+			domains: new Set(["strike.damage"]),
+			defaultEnabled: true,
+
+			modifier_type: "universal",
+
+			mode: "add",
+			value: this.path.combat.rank
+		});
+		this.dynamic_effects.effect_die_size.push({
+			label: "Base Strike Die Size",
+			domains: new Set(["strike.damage"]),
+			defaultEnabled: true,
+			
+			modifier_type: "universal",
+			
+			mode: "upgrade",
+			value: 4
+		});
+		this.dynamic_effects.effect_potency.push({
+			label: "Base Strike Potency",
+			domains: new Set(["strike.damage"]),
+			defaultEnabled: true,
+			
+			modifier_type: "universal",
+			
+			mode: "add",
+			value: 1
+		});
+
+		this.dynamic_effects.proficiency_rank.push({
+			label: _loc("warden.proficiency_rank_label", {
+				type: _loc("warden.character.FIELDS.path.combat.label"),
+			}),
+			domains: new Set(["strike.damage"]),
+			applicable_if: ["strike.melee"],
+			defaultEnabled: true,
+
+			mode: "upgrade",
+			value: this.path.combat.rank,
+		});
+		this.dynamic_effects.bonus.push({
+			label: "Combat Proficiency",
+			domains: new Set(["strike.damage"]),
+			applicable_if: ["strike.melee"],
+			defaultEnabled: true,
+
+			modifier_type: "proficiency",
+
+			mode: "upgrade",
+			value: "@profCalc",
+		});		
 	}
 
 	// TODO: add effect parameter for all of these when the system's worked out

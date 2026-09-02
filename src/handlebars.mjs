@@ -6,6 +6,7 @@ export const registerHelpers = async () => {
 		BaseCharacterData.sizeLocKey,
 	);
 	Handlebars.registerHelper("warden-generate-bool-array", generateBoolArray);
+	Handlebars.registerHelper("warden-prettify-modifier", prettifyModifier);
 
 	await foundry.applications.handlebars.loadTemplates({
 		"warden-diamond": "systems/warden/static/partials/diamond.hbs",
@@ -23,3 +24,13 @@ const generateBoolArray = (total, context) => {
 
 	return ret;
 };
+
+const prettifyModifier = (value, prefix = "", postfix = "") => {
+	const sign = isNaN(value) 
+					? "" 
+					: value >= 0 
+						? "+" 
+						: "-";
+
+	return `${sign}${prefix}${value}${postfix}`
+}

@@ -1,3 +1,4 @@
+import { DAMAGE_TYPES } from "../../../damage_type.mjs";
 import { runCheck } from "../../../roll/check_manager.mjs";
 import { runEffect } from "../../../roll/effect_manager.mjs";
 import { BaseEquipment } from "./base_equipment.mjs";
@@ -96,6 +97,34 @@ export class Weapon extends BaseEquipment {
 		return properties;
 	}
 
+	prepareDerivedData() {
+		super.prepareDerivedData();
+
+		this.registerNewDynamicEffect("effect_die_size", {
+			label: `${this.parent.name} Base Die Size`,
+			domains: new Set([`strike.${this.parent.id}.damage`]),
+			defaultEnabled: true,
+			
+			modifier_type: "universal",
+
+			mode: "upgrade",
+			value: this.damage_die
+		})
+
+		this.damage_types.forEach(damage_type => {
+			this.registerNewDynamicEffect("effect_damage_type", {
+				label: `${this.parent.name} Base Damage`,
+				domains: new Set([`strike.${this.parent.id}.damage`]),
+				defaultEnabled: true,
+				
+				modifier_type: "universal",
+
+				mode: "add",
+				value: DAMAGE_TYPES[damage_type].abbreviation
+			})
+		});
+	}
+
 	#weaponResolver(map) {
 		const domains = new Set([
 			"strike",
@@ -164,17 +193,24 @@ export class Weapon extends BaseEquipment {
 		});
 
 		const domains = new Set([
+			"effect-roll",
 			"damage",
 			"strike",
 			"strike.damage",
 			`strike.${this.parent.id}.damage`,
 		]);
 		const discriminators = new Set();
+		
+		discriminators.add("strike");
+		discriminators.add("strike.damage");
+		discriminators.add(`strike.${this.parent.id}.damage`);
 
 		if (this.type === "melee") {
 			domains.add("strike.melee");
+			discriminators.add("strike.melee");
 		} else {
 			domains.add("strike.ranged");
+			discriminators.add("strike.ranged");
 		}
 
 		if (map > 0) {
@@ -185,24 +221,17 @@ export class Weapon extends BaseEquipment {
 			domains,
 			discriminators,
 		);
-		const attackResolver = this.#weaponResolver(map);
-
-		const num_dice = attackResolver.resolve("proficiency_rank");
-
-		let modifier = resolver.modifierSum();
-		if (this.type === "melee") {
-			modifier += attackResolver.resolve("proficiency_rank");
-		}
 
 		return runEffect(
 			rollData,
 			speaker,
+			resolver,
 			{
 				title,
-				num_dice,
+				num_dice: 1,
 				die_size: this.damage_die,
 				potency: 1,
-				modifier,
+				modifier: 0,
 			},
 			{ skip },
 		);

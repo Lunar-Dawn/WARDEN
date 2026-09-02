@@ -101,10 +101,10 @@ export class WARDENItemSheet extends HandlebarsApplicationMixin(ItemSheet) {
                         "Proficiency Rank",
                     "system.dynamic_effects.bonus": "Bonus",
                     "system.dynamic_effects.penalty": "Penalty",
-                    "system.dynamic_effects.effect_dice":
-                        "Effect Dice (Not implemented)",
-                    "system.dynamic_effects.effect_potency":
-                        "Effect Potency (Not implemented)",
+                    "system.dynamic_effects.effect_dice": "Effect Dice",
+                    "system.dynamic_effects.effect_die_size": "Effect Die Size",
+                    "system.dynamic_effects.effect_potency": "Effect Potency",
+                    "system.dynamic_effects.effect_damage_type": "Effect Damage Type",
                     "system.dynamic_effects.benefit":
                         "Benefit (Not implemented)",
                     "system.dynamic_effects.detriment":

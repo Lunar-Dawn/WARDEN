@@ -1,4 +1,4 @@
-import { transformEffectsForDisplay } from "../roll/check_manager.mjs";
+import { transformEffectsForDisplay } from "../roll/common_manager.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 

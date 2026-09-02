@@ -86,18 +86,6 @@ export class BaseCharacterData extends TypeDataModel {
 	/*|-------------------------------------Dynamic Result system implementation-------------------------------------|*/
 	/*================================================================================================================*/
 
-	/**
-	 * @typedef {
-	 *    "proficiency_rank"
-	 *  | "bonus"
-	 *  | "penalty"
-	 *  | "effect_dice"
-	 *  | "effect_potency"
-	 *  | "benefit"
-	 *  | "detriment"
-	 * } DynamicEffectType
-	 */
-
 	/** TODO: Priority?
 	 * @typedef {
 	 *    "add"
@@ -129,7 +117,9 @@ export class BaseCharacterData extends TypeDataModel {
 			penalty: [],
 
 			effect_dice: [],
+			effect_die_size: [],
 			effect_potency: [],
+			effect_damage_type: [],
 
 			benefit: [],
 			detriment: [],

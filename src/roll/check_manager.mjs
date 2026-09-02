@@ -1,4 +1,5 @@
 import { CheckWindow } from "../dialog/check.mjs";
+import { CommonManager, transformEffectsForDisplay } from "./common_manager.mjs";
 import { WardenCheck } from "./warden_check.mjs";
 
 /**
@@ -20,7 +21,7 @@ import { WardenCheck } from "./warden_check.mjs";
  * @property {ChatSpeakerData} speaker - Who should the roll message originate from.
  * @property {CheckParameters} parameters - The parameters used for the roll.
  */
-class CheckManager {
+class CheckManager extends CommonManager {
 	/**
 	 * Create a CheckManager.
 	 * @param {object} rollData
@@ -29,77 +30,15 @@ class CheckManager {
 	 * @param {CheckParameters} parameters
 	 */
 	constructor(rollData, speaker, resolver, parameters) {
-		this.id = foundry.utils.randomID();
-		this.idDomain = `check.${this.id}`;
-
-		this.rollData = rollData;
-		this.speaker = speaker;
-		this.parameters = parameters;
-		this.resolver = resolver;
-		this.resolver.domains.add(this.idDomain);
+		super(rollData, speaker, resolver, parameters);
 
 		this.parameters.difficulty ??= "open";
 		this.parameters.benefit ??= false;
 		this.parameters.detriment ??= false;
-
-		this.resolver.resolveAll();
 	}
 
-	/**
-	 * Disabled all modifiers of a give type and sign
-	 * @param {string} path
-	 * @param {ModifierType} modifierType
-	 */
-	#disableModifierType(path, modifierType) {
-		this.resolver.effects[path]
-			.filter((m) => m.modifier_type === modifierType)
-			.forEach((m) => (m.enabled = false));
-	}
-
-	/**
-	 * Add a new modifier to the check
-	 * @param {PendingEffect} pendingEffect
-	 */
-	addModifier(pendingEffect) {
-		const path = pendingEffect.value < 0 ? "penalty" : "bonus";
-
-		if (pendingEffect.modifier_type !== "universal") {
-			this.#disableModifierType(path, pendingEffect.modifier_type);
-		}
-
-		/** @type DynamicEffect */
-		const newEffect = {
-			label: pendingEffect.label,
-			mode:
-				pendingEffect.modifier_type === "universal" ? "add" : "upgrade",
-
-			domains: new Set([this.idDomain]),
-			applicable_if: true,
-			enabled: true,
-
-			modifier_type: pendingEffect.modifier_type,
-			value: Math.abs(pendingEffect.value),
-		};
-
-		this.resolver.effects[path].push(newEffect);
-		this.resolver.reset();
-	}
-
-	/**
-	 * Toggle the effect, will disable all others of type and sign if needed.
-	 * @param {string} path
-	 * @param {string} index
-	 */
-	toggle(path, index) {
-		const effect = this.resolver.effects[path][index];
-
-		// If we're enabling a non-universal modifier we disable all with the same type and sign first
-		if (!effect.enabled && effect.modifier_type !== "universal") {
-			this.#disableModifierType(path, effect.modifier_type);
-		}
-
-		effect.enabled = !effect.enabled;
-		this.resolver.reset();
+	get idDomainPrefix() {
+		return "check";
 	}
 
 	/**
@@ -242,48 +181,4 @@ export const runCheck = async (
 	}
 
 	return manager.executeCheck();
-};
-
-const TYPES_ORDER = {
-	universal: 0,
-	proficiency: 1,
-	item: 2,
-	status: 3,
-	circumstance: 4,
-};
-// Sort by modifier type, bonus/penalty, label, then index
-const modifierSort = (a, b) => {
-	return (
-		TYPES_ORDER[a.modifier_type] - TYPES_ORDER[b.modifier_type] ||
-		a.dir - b.dir ||
-		a.label.localeCompare(b.label) ||
-		a.index - b.index
-	);
-};
-export const transformEffectsForDisplay = (effects, resolver) => {
-	const annotatedBonuses =
-		effects.bonus?.map((e, i) => ({
-			path: "bonus",
-			index: i,
-			modifier_type: e.modifier_type,
-			dir: 1,
-			label: e.label ?? "",
-			value: resolver.parseValue(e.value),
-			enabled: e.enabled,
-		})) ?? [];
-	const annotatedPenalties =
-		effects.penalty?.map((e, i) => ({
-			path: "penalty",
-			index: i,
-			modifier_type: e.modifier_type,
-			dir: -1,
-			label: e.label ?? "",
-			value: -resolver.parseValue(e.value),
-			enabled: e.enabled,
-		})) ?? [];
-
-	const modifiers = annotatedBonuses.concat(annotatedPenalties);
-	modifiers.sort(modifierSort);
-
-	return modifiers;
 };

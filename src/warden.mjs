@@ -1,4 +1,3 @@
-import { setupRollButton } from "./chat_roll_buttons.mjs";
 import {
 	DAMAGE_CATEGORY_CHOICES,
 	DAMAGE_TYPE_CHOICES,
@@ -103,7 +102,6 @@ Hooks.once("init", () => {
 	});
 
 	registerHelpers();
-	setupRollButton();
 });
 
 Hooks.once("i18nInit", () => {

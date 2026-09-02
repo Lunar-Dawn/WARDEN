@@ -370,14 +370,24 @@
 			"proficiency": "Proficiency",
 			"item": "Item",
 			"status": "Status",
-			"circumstance": "Circumstance"
+			"circumstance": "Circumstance",
+
+			"effect_dice": "Dice",
+			"effect_die_size": "Die Size",
+			"effect_potency": "Potency",
+			"effect_damage_type": "Damage Type"
 		},
 		"modifier_type_abbr": {
 			"universal": "UNIV",
 			"proficiency": "PROF",
 			"item": "ITEM",
 			"status": "STAT",
-			"circumstance": "CIRC"
+			"circumstance": "CIRC",
+
+			"effect_dice": "Dice",
+			"effect_die_size": "DieSize",
+			"effect_potency": "Potency",
+			"effect_damage_type": "DmgType"
 		},
 
 		"check_label": "{type} Check",

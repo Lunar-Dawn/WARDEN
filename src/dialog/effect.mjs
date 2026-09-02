@@ -1,3 +1,5 @@
+import { transformEffectsForDisplay } from "../roll/common_manager.mjs";
+
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
@@ -17,26 +19,31 @@ export class EffectWindow extends HandlebarsApplicationMixin(ApplicationV2) {
 		this.manager = manager;
 
 		this.resolve = resolve;
+
+		this.pending_effect = {
+			value: 0,
+			label: "",
+			modifier_type: "circumstance",
+		};
 	}
 
 	static PARTS = {
 		main: {
 			template: "systems/warden/static/dialog/effect-window.hbs",
+			forms: {
+				".add-modifier-form": {
+					handler: EffectWindow.#addModifier,
+					submitOnChange: true,
+					closeOnSubmit: false,
+				},
+			},
 		},
 	};
 
 	static DEFAULT_OPTIONS = {
 		actions: {
-			num_dice: EffectWindow.#numDice,
-			die_size: EffectWindow.#dieSize,
-			potency: EffectWindow.#potency,
-			modifier: EffectWindow.#modifier,
-		},
-		tag: "form",
-		form: {
-			closeOnSubmit: false,
-			handler: EffectWindow.#formHandler,
-			submitOnChange: true,
+			execute: EffectWindow.#confirm,
+			toggleModifier: EffectWindow.#toggleModifier,
 		},
 	};
 
@@ -47,58 +54,52 @@ export class EffectWindow extends HandlebarsApplicationMixin(ApplicationV2) {
 	async _prepareContext(options) {
 		const context = await super._prepareContext(options);
 
-		context.manager = this.manager;
-		context.parameters = this.manager.parameters;
+		context.resolver = this.manager.resolver;
+		context.formula = this.manager.formula;
+
+		context.pending_effect = this.pending_effect;
+		context.choices = {
+			universal: "warden.modifier_type_abbr.universal",
+			proficiency: "warden.modifier_type_abbr.proficiency",
+			item: "warden.modifier_type_abbr.item",
+			status: "warden.modifier_type_abbr.status",
+			circumstance: "warden.modifier_type_abbr.circumstance",
+		};
+
+		context.modifiers = transformEffectsForDisplay(
+			this.manager.resolver.applicableEffects,
+			this.manager.resolver,
+		);
 
 		return context;
 	}
 
-	static async #formHandler(e, form, data) {
-		this.manager.setNumDice(parseInt(data.get("num_dice")));
-		this.manager.setDieSize(parseInt(data.get("die_size")));
-		this.manager.setPotency(parseInt(data.get("potency")));
-		this.manager.setModifier(parseInt(data.get("modifier")));
-
-		if (e.type !== "submit") {
-			this.render();
-			return;
-		}
-
+	static async #confirm() {
 		this.close({ submit: true });
 		if (this.resolve !== null) {
 			this.resolve(true);
 		}
 	}
 
-	static async #numDice(e, target) {
-		const new_value =
-			this.manager.parameters.num_dice +
-			(target.dataset.dir === "up" ? +1 : -1);
-		this.manager.setNumDice(new_value);
+	static async #toggleModifier(_, target) {
+		const path = target.dataset.path;
+		const index = target.dataset.index;
+		this.manager.toggle(path, index);
 
 		this.render();
 	}
-	static async #dieSize(e, target) {
-		const new_value =
-			this.manager.parameters.die_size +
-			(target.dataset.dir === "up" ? +2 : -2);
-		this.manager.setDieSize(new_value);
+	static async #addModifier(e, form, data) {
+		Object.assign(this.pending_effect, data.object);
 
-		this.render();
-	}
-	static async #potency(e, target) {
-		const new_value =
-			this.manager.parameters.potency +
-			(target.dataset.dir === "up" ? +1 : -1);
-		this.manager.setPotency(new_value);
+		if (e.type !== "submit") return;
 
-		this.render();
-	}
-	static async #modifier(e, target) {
-		const new_value =
-			this.manager.parameters.modifier +
-			(target.dataset.dir === "up" ? +1 : -1);
-		this.manager.setModifier(new_value);
+		this.manager.addModifier(this.pending_effect);
+
+		this.pending_effect = {
+			value: 0,
+			label: "",
+			modifier_type: "circumstance",
+		};
 
 		this.render();
 	}

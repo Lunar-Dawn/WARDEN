@@ -15,26 +15,16 @@ export const getBaseActiveEffect = (label, type) => {
 };
 
 const getDefaultValue = (label, type) => {
-	const value = {
+	return {
 		label: label,
 		domains: [],
 
 		value: 0,
+		mode: "upgrade",
+		modifier_type: "universal",
 
 		applicable_if: [],
 
 		defaultEnabled: true,
 	};
-
-	switch (type) {
-		case "bonus":
-		case "penalty":
-			value.mode = "upgrade";
-			value.modifier_type = "universal";
-			break;
-		default:
-			value.mode = "add";
-	}
-
-	return value;
 };

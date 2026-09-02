@@ -672,77 +672,25 @@
 
 .effect-window {
 	display: grid;
+	justify-items: stretch;
+	gap: 1em;
 
-	grid-template-columns: repeat(4, 25%);
-	grid-template-rows: 1lh 1.4lh 1lh auto;
-
-	gap: 0 2px;
-
-	.parameter {
+	.modifiers {
 		display: grid;
-		grid-template-rows: subgrid;
-		grid-row: span 3;
+		grid-template-columns: min-content 1fr max-content min-content;
 
-		label {
-			border-left: 1px solid var(--color-light-5);
-			border-right: 1px solid var(--color-light-5);
-
-			cursor: text;
-
-			font-size: 1.4em;
-
-			outline: 2px solid transparent;
-			outline-offset: -2px;
-			transition: outline-color 0.5s;
-
-			span {
-				display: block;
-			}
-
-			input {
-				height: 0;
-
-				padding: 0;
-				margin: 0;
-				border: none;
-
-				border-radius: 0;
-
-				outline: none;
-				outline-offset: 0;
-			}
-
-			&:focus-within {
-				outline-color: var(--color-cool-3);
-
-				span {
-					height: 0;
-				}
-				input {
-					height: 100%;
-				}
-			}
-		}
+		gap: 0.25em 1ch;
+		margin-bottom: 1em;
 
 		button {
-			padding: 0;
-			height: unset;
-			min-height: unset;
-
-			&:first-child {
-				border-bottom-left-radius: 0;
-				border-bottom-right-radius: 0;
-			}
-			&:last-child {
-				border-top-left-radius: 0;
-				border-top-right-radius: 0;
-			}
+			height: 100%;
 		}
 	}
-
-	> button {
+	input[type="number"] {
+		min-width: calc(4ch + 1rem);
+	}
+	button[data-action="execute"] {
 		font-size: 1.2em;
-		margin-top: 0.75em;
 	}
 }
 

@@ -688,7 +688,7 @@ export class CharacterData extends BaseCharacterData {
 			modifier_type: "universal",
 
 			mode: "add",
-			value: this.path.combat.rank,
+			value: Math.max(this.path.combat.rank, 1),
 		});
 		this.dynamic_effects.effect_die_size.push({
 			label: "Base Strike Die Size",

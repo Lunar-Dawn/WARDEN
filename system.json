@@ -2,7 +2,7 @@
 	"id": "warden",
 	"title": "WARDEN",
 	"description": "lorem ipsum dolor sit amet",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"compatibility": {
 		"minimum": "14",
 		"verified": "14.363"

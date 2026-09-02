@@ -1,6 +1,6 @@
 {
 	"name": "warden",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"description": "A FoundryVTT implementation of the WARDEN system.",
 	"homepage": "https://github.com/Lunar-Dawn/WARDEN#readme",
 	"bugs": {

@@ -187,25 +187,10 @@ export class BaseCharacterData extends TypeDataModel {
 	 * @return DynamicResultResolver
 	 */
 	getDynamicResultResolver(domains, discriminators = []) {
-		const target = game.user.targets.first()?.actor.system;
-
-		const targetDomains =
-			target !== undefined ? target.getDomains("target") : [];
-		const raw_domains = [
-			...domains,
-			...this.getDomains(),
-			...targetDomains,
-		];
-		const domain_set = new Set(raw_domains);
-
-		const targetDiscriminators =
-			target !== undefined ? target.getDiscriminators("target") : [];
-		const raw_discriminators = [
-			...discriminators,
-			...this.getDiscriminators(),
-			...targetDiscriminators,
-		];
-		const discriminator_set = new Set(raw_discriminators);
+		const domain_set = Array.isArray(domains) ? new Set(domains) : domains;
+		const discriminator_set = Array.isArray(discriminators)
+			? new Set(discriminators)
+			: discriminators;
 
 		const filtered_effects = {};
 
@@ -227,8 +212,7 @@ export class BaseCharacterData extends TypeDataModel {
 			discriminator_set,
 			filtered_effects,
 			{
-				origin: this,
-				target,
+				origin: this
 			},
 		);
 	}

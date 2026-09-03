@@ -16,6 +16,10 @@ import { WardenCheck } from "./warden_check.mjs";
  * @property {number|"open"?} difficulty - The difficulty of the check, or "open" if open
  * @property {boolean?} benefit - Should the roll gain a benefit. TODO: temp until dynamic effects can deal with it
  * @property {boolean?} detriment - Should the roll suffer a detriment. TODO: temp until dynamic effects can deal with it
+ * @property {BaseCharacterData} target - To be used with the `against` param below. The target's statistics will be used to adjust the difficulty.
+ * @property {string[]} against - The statistic to roll against, if any. If there's an opponent, it'll grab any dynamic effects with these strings
+ * 								  as their domains / discriminators, and the resulting total will be added to the difficulty.
+ * 							      More than one against string adds the higher of the resulting totals.
  */
 
 /**
@@ -38,6 +42,14 @@ class CheckManager extends CommonManager {
 		this.parameters.difficulty ??= "open";
 		this.parameters.benefit ??= false;
 		this.parameters.detriment ??= false;
+		this.parameters.against ??= [];
+		this.parameters.target ??= null;
+
+		/**
+		 * As targetDefence() doesn't change here, and it's somewhat intensive to calculate,
+		 * we'll use this to cache it the first time we calculate it.
+		 */
+		this.cached_vs_data = null;
 	}
 
 	get idDomainPrefix() {
@@ -81,6 +93,7 @@ class CheckManager extends CommonManager {
 
 	/**
 	 * Benefit and detriment-adjusted difficulty, or "open"
+	 * Do NOT apply targetDefence here, as this gets shown in the Check Window!
 	 */
 	get difficulty() {
 		return this.isOpen
@@ -98,6 +111,33 @@ class CheckManager extends CommonManager {
 		return !!this.parameters.benefit;
 	}
 
+	/**
+ 	* The struct returned by targetDefence().
+	* @typedef {Object} TargetDefenceData
+	* @property {string} name - Lowercase name of the statistic.
+	* @property {number} value - The summed modifier value of the statistic.
+	*/
+
+	/**
+	 * Returns data about the target's statistic that's being rolled against, if there is any.
+	 * If there are more, returns the highest one. If there are multiple biggest, returns the one found earlier.
+	 * If there are none, returns a ""-named 0-value "statistic".
+	 * 
+	 * @returns {TargetDefenceData}
+	 */
+	get targetDefence() {
+		if (!!this.cached_vs_data) return this.cached_vs_data;
+		if (this.parameters.target === null || this.parameters.target === undefined) return {name: "", value: 0};
+
+		// TODO: the base character TypeDataModel should have a function that looks for the appropriate resolver, as both
+		// characters and opponents have different sets of resolvers with different default domains.
+		this.cached_vs_data = this.parameters.against
+			.map((x) => {return {name: x, value: this.parameters.target.getDynamicResultResolver([x, "defense"], [x, "defense"]).modifierSum()}})
+			.reduce((prev, current) => (prev && prev.value > current.value) ? prev : current);
+
+		return this.cached_vs_data;
+	}
+
 	async display() {
 		return CheckWindow.wait(this, {});
 	}
@@ -107,7 +147,7 @@ class CheckManager extends CommonManager {
 	 * @returns {{difference: number, result_tier: -1|0|1|2}}
 	 */
 	calculateResult() {
-		const difference = this.roll.total - this.difficulty;
+		const difference = this.roll.total - this.difficulty - this.targetDefence.value;
 
 		let result_tier;
 		if (difference >= 10) result_tier = 2;
@@ -135,6 +175,7 @@ class CheckManager extends CommonManager {
 
 		this.roll = new WardenCheck(this.formula, this.rollData, {
 			difficulty: this.difficulty,
+			target_defence: this.targetDefence,
 			modifiers: transformEffectsForDisplay(
 				this.resolver.appliedEffects,
 				this.resolver,

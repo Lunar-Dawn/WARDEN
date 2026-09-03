@@ -1,5 +1,6 @@
 import { DAMAGE_TYPES } from "../../../damage_type.mjs";
 import { runCheck } from "../../../roll/check_manager.mjs";
+import { getTarget } from "../../../roll/common_manager.mjs";
 import { runEffect } from "../../../roll/effect_manager.mjs";
 import { BaseEquipment } from "./base_equipment.mjs";
 
@@ -168,22 +169,27 @@ export class Weapon extends BaseEquipment {
 		});
 
 		let title;
+		let against = [];
 		const difficulty = 10 + map * 5;
 
 		if (this.type === "melee") {
 			title = _loc("warden.action.melee_strike_weapon_title", {
 				weapon: this.parent.name,
 			});
+			against.push("toughness");
 		} else {
 			title = _loc("warden.action.ranged_strike_weapon_title", {
 				weapon: this.parent.name,
 			});
+			against.push("perception");
 		}
+
+		const target = getTarget();
 
 		const resolver = this.#weaponResolver(
 			map,
-			extra_domains,
-			extra_discriminators,
+			extra_domains.concat(this.parent.actor.system.getDomains(), !!target ? target.getDomains("target") : []),
+			extra_discriminators.concat(this.parent.actor.system.getDiscriminators(), !!target ? target.getDiscriminators("target") : []),
 		);
 
 		return runCheck(
@@ -193,6 +199,8 @@ export class Weapon extends BaseEquipment {
 			{
 				difficulty,
 				title,
+				against,
+				target
 			},
 			{ skip },
 		);
@@ -238,13 +246,17 @@ export class Weapon extends BaseEquipment {
 			discriminators.add("map");
 		}
 
-		extra_domains.forEach((extra_domain) => {
-			domains.add(extra_domain);
-		});
-		extra_discriminators.forEach((extra_discriminator) => {
-			discriminators.add(extra_discriminator);
-		});
+		const target = getTarget();
 
+		[...extra_domains, ...this.parent.actor.system.getDomains(), ...(!!target ? target.getDomains("target") : [])]
+			.forEach((extra_domain) => {
+				domains.add(extra_domain);
+			});
+		[...extra_discriminators, ...this.parent.actor.system.getDiscriminators(), ...(!!target ? target.getDiscriminators("target") : [])]
+			.forEach((extra_discriminator) => {
+				discriminators.add(extra_discriminator);
+			});
+		
 		const resolver = this.parent.actor.system.getDynamicResultResolver(
 			domains,
 			discriminators,

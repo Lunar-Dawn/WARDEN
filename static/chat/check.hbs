@@ -17,6 +17,10 @@
 				"warden.roll.vs_difficulty"
 				difficulty=difficulty
 			}}
+			<br>
+			{{#if target_details}}
+				{{localize target_details.difficulty_name }} ({{ target_details.difficulty_dv }}) {{ target_details.statistic }}
+			{{/if}}
 		</div>
 	{{/unless}}
 	{{#if modifiers.length}}

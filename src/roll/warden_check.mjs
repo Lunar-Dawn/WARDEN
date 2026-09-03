@@ -3,6 +3,7 @@ export class WardenCheck extends Roll {
 		super(formula, data, options);
 
 		this.difficulty = options.difficulty;
+		this.target_defence = options.target_defence;
 		this.modifiers = options.modifiers;
 	}
 
@@ -60,6 +61,14 @@ export class WardenCheck extends Roll {
 		}
 	}
 
+	getDifficultyLoc(dv) {
+		if (dv >= 30) return "warden.roll.difficulty.impossible";
+		if (dv >= 25) return "warden.roll.difficulty.extreme";
+		if (dv >= 20) return "warden.roll.difficulty.daunting";
+		if (dv >= 15) return "warden.roll.difficulty.difficult";
+		return "warden.roll.difficulty.standard";
+	}
+
 	async _prepareChatRenderContext(options) {
 		const context = await super._prepareChatRenderContext(options);
 
@@ -76,7 +85,7 @@ export class WardenCheck extends Roll {
 
 		context.isOpen = this.isOpen;
 		context.d20_result = this.d20_result;
-		context.difficulty = this.difficulty;
+		context.difficulty = this.difficulty + this.target_defence.value;
 		context.nat_class =
 			this.d20_result === 20
 				? "success-color"
@@ -84,6 +93,11 @@ export class WardenCheck extends Roll {
 					? "failure-color"
 					: "";
 		context.modifiers = this.modifiers;
+		context.target_details = {
+			difficulty_name: this.getDifficultyLoc(this.difficulty),
+			difficulty_dv: this.difficulty,
+			statistic: this.target_defence.name.length > 0 ? game.i18n.localize("warden.roll.vs_statistic", {statistic: this.target_defence.name.capitalize()}) : ""
+		};
 
 		return context;
 	}

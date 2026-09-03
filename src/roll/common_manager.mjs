@@ -187,3 +187,11 @@ export const transformEffectsForDisplay = (effects, resolver) => {
 
 	return modifiers;
 };
+
+/**
+ * Super shrimple stuff -- just gets the first target the user is currently targeting.
+ * Mainly exists as a common ground for anything that needs it.
+ */
+export const getTarget = () => {
+	return game.user.targets.first()?.actor.system;
+}

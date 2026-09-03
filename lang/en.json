@@ -419,6 +419,7 @@
 
 			"result_by": "{result} by {difference}",
 			"vs_difficulty": "vs. DV {difficulty}",
+			"vs_statistic": "vs. {statistic} DV",
 
 			"difficulty": {
 				"open": "Open Check",

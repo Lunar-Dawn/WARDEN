@@ -318,7 +318,7 @@ export class CharacterSheet extends BaseCharacterSheet {
 			if (itemButtons.length === 0) continue;
 
 			const buttonElements = this.element.querySelectorAll(
-				`[data-item-id=${item.id}] button`,
+				`[data-item-id="${item.id}"] button`,
 			);
 
 			buttonElements.forEach((button, index) => {

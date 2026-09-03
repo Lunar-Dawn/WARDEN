@@ -76,19 +76,36 @@ export class DynamicResultResolver {
 		return this.results;
 	}
 
-	parseValue(value) {
-		if (typeof value === "string" && value.startsWith("@")) {
-			if (value === "@profCalc") {
-				// Very special case here
-				const rank = this.#resolveType("proficiency_rank");
-				if (rank > 0) {
-					return rank + this.data.origin.level;
-				} else {
-					return Math.min(Math.floor(this.data.origin.level / 2), 10);
-				}
-			}
+	parseValue(value, extra_data = {}) {
+		if (typeof value === "string") {
+			const proficiency_rank = this.#resolveType("proficiency_rank");
+			const profCalc = proficiency_rank > 0 ? proficiency_rank + this.data.origin.level : Math.min(Math.floor(this.data.origin.level / 2), 10);
 
-			return this.#resolveType(value.substring(1));
+			const data = {
+				profCalc,
+				proficiency_rank,
+				bonus: this.#resolveType("bonus"),
+				penalty: this.#resolveType("penalty"),
+				effect_dice: this.#resolveType("effect_dice"),
+				effect_die_size: this.#resolveType("effect_die_size"),
+				effect_potency: this.#resolveType("effect_potency"),
+				effect_damage_type: this.#resolveType("effect_damage_type"),
+				benefit: this.#resolveType("benefit"),
+				detriment: this.#resolveType("detriment"),
+				...extra_data
+			};
+
+			try {
+				const roll = new Roll(value, data).evaluateSync();
+				return roll.total;
+			} catch (_error) {
+				// Basically, this try-catch part is for handling damage types.
+				// As they aren't really valid roll terms to evaluate, the evaluation will fail.
+				// That's actually fine, because we don't want it evaluated anyway.
+				// This does mean you cannot evaluate to strings, but the PF2e system also runs its
+				// own evaluation for that (it's the `{actor|whatever}` thing it does), so it's no biggie.
+				return value;
+			}
 		} else {
 			return value;
 		}

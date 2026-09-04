@@ -1,14 +1,17 @@
+import { BaseItem } from "../base_item.mjs";
+
 const { HTMLField, StringField } = foundry.data.fields;
-const { TypeDataModel } = foundry.abstract;
 
 /**
  * @property {string} description
  */
-export class Feat extends TypeDataModel {
+export class Feat extends BaseItem {
 	static LOCALIZATION_PREFIXES = ["warden.feat"];
 
 	static defineSchema() {
 		return {
+			...super.defineSchema(),
+
 			description: new HTMLField({
 				required: true,
 			}),

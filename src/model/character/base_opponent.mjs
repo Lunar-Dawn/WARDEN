@@ -48,6 +48,151 @@ export class BaseOpponentData extends BaseCharacterData {
 		return schema;
 	}
 
+	/**
+	 * Collect the dynamic effects that are specific to NPC sheets
+	 *
+	 * @return {Generator<DynamicEffect>}
+	 */
+	*getBaseDynamicEffects() {
+		yield* super.getBaseDynamicEffects();
+
+		yield* this.#createStatisticsDynamicEffects();
+		yield* this.#createProficiencyDynamicEffects();
+	}
+
+	/**
+	 * Create the effects to calculate the minor and major statistic
+	 *
+	 * @return {Generator<DynamicEffect>}
+	 */
+	*#createStatisticsDynamicEffects() {
+		yield {
+			type: "proficiency_rank",
+			label: "Major Statistic",
+			domains: new Set(["major-statistic"]),
+			defaultEnabled: true,
+
+			mode: "upgrade",
+			value: this.majorProficiencyRank,
+		};
+		yield {
+			type: "proficiency_rank",
+			label: "Minor Statistic",
+			domains: new Set(["minor-statistic"]),
+			defaultEnabled: true,
+
+			mode: "upgrade",
+			value: this.minorProficiencyRank,
+		};
+		yield {
+			type: "bonus",
+			label: "Major Statistic",
+			domains: new Set(["major-statistic"]),
+			defaultEnabled: true,
+
+			modifier_type: "proficiency",
+
+			mode: "upgrade",
+			value: "@profCalc",
+		};
+		yield {
+			type: "bonus",
+			label: "Minor Statistic",
+			domains: new Set(["minor-statistic"]),
+			defaultEnabled: true,
+
+			modifier_type: "proficiency",
+
+			mode: "upgrade",
+			value: "@profCalc",
+		};
+	}
+
+	/**
+	 * Create the effects deciding which statistic to use for each proficiency
+	 *
+	 * @return {Generator<DynamicEffect>}
+	 */
+	*#createProficiencyDynamicEffects() {
+		yield {
+			type: "proficiency_rank",
+			label: _loc("warden.proficiency_rank_label", {
+				type: _loc("warden.character.FIELDS.path.combat.label"),
+			}),
+			domains: new Set(["combat"]),
+			defaultEnabled: true,
+
+			mode: "upgrade",
+			value: this.combat.is_major
+				? this.majorProficiencyRank
+				: this.minorProficiencyRank,
+		};
+		yield {
+			type: "proficiency_rank",
+			label: _loc("warden.proficiency_rank_label", {
+				type: _loc("warden.character.FIELDS.path.skill.label"),
+			}),
+			domains: new Set(["skill"]),
+			defaultEnabled: true,
+
+			mode: "upgrade",
+			value: this.skill.is_major
+				? this.majorProficiencyRank
+				: this.minorProficiencyRank,
+		};
+		yield {
+			type: "proficiency_rank",
+			label: _loc("warden.proficiency_rank_label", {
+				type: _loc("warden.character.FIELDS.path.special.label"),
+			}),
+			domains: new Set(["special"]),
+			defaultEnabled: true,
+
+			mode: "upgrade",
+			value: this.special.is_major
+				? this.majorProficiencyRank
+				: this.minorProficiencyRank,
+		};
+
+		yield {
+			type: "proficiency_rank",
+			label: _loc("warden.proficiency_rank_label", {
+				type: _loc("warden.character.FIELDS.defense.toughness.label"),
+			}),
+			domains: new Set(["toughness"]),
+			defaultEnabled: true,
+
+			mode: "upgrade",
+			value: this.toughness.is_major
+				? this.majorProficiencyRank
+				: this.minorProficiencyRank,
+		};
+		yield {
+			type: "proficiency_rank",
+			label: _loc("warden.proficiency_rank_label", {
+				type: _loc("warden.character.FIELDS.defense.resolve.label"),
+			}),
+			domains: new Set(["resolve"]),
+			defaultEnabled: true,
+
+			mode: "upgrade",
+			value: this.resolve.is_major
+				? this.majorProficiencyRank
+				: this.minorProficiencyRank,
+		};
+		yield {
+			type: "proficiency_rank",
+			label: "Perception Rank",
+			domains: new Set(["perception"]),
+			defaultEnabled: true,
+
+			mode: "upgrade",
+			value: this.perception.is_major
+				? this.majorProficiencyRank
+				: this.minorProficiencyRank,
+		};
+	}
+
 	prepareDerivedData() {
 		super.prepareDerivedData();
 
@@ -63,190 +208,6 @@ export class BaseOpponentData extends BaseCharacterData {
 		this.speed = {};
 		this.speed.base = 5;
 		this.speed.value = this.speed.base;
-
-		this.#prepareBaseDynamicEffects();
-	}
-	#prepareBaseDynamicEffects() {
-		this.dynamic_effects.proficiency_rank.push({
-			label: "Major Statistic",
-			domains: new Set(["major-statistic"]),
-			defaultEnabled: true,
-
-			mode: "upgrade",
-			value: this.majorProficiencyRank,
-		});
-		this.dynamic_effects.proficiency_rank.push({
-			label: "Minor Statistic",
-			domains: new Set(["minor-statistic"]),
-			defaultEnabled: true,
-
-			mode: "upgrade",
-			value: this.minorProficiencyRank,
-		});
-		this.dynamic_effects.bonus.push({
-			label: "Major Statistic",
-			domains: new Set(["major-statistic"]),
-			defaultEnabled: true,
-
-			modifier_type: "proficiency",
-
-			mode: "upgrade",
-			value: "@profCalc",
-		});
-		this.dynamic_effects.bonus.push({
-			label: "Minor Statistic",
-			domains: new Set(["minor-statistic"]),
-			defaultEnabled: true,
-
-			modifier_type: "proficiency",
-
-			mode: "upgrade",
-			value: "@profCalc",
-		});
-
-		this.dynamic_effects.proficiency_rank.push({
-			label: _loc("warden.proficiency_rank_label", {
-				type: _loc("warden.character.FIELDS.path.combat.label"),
-			}),
-			domains: new Set(["combat"]),
-			defaultEnabled: true,
-
-			mode: "upgrade",
-			value: this.combat.is_major
-				? this.majorProficiencyRank
-				: this.minorProficiencyRank,
-		});
-		this.dynamic_effects.proficiency_rank.push({
-			label: _loc("warden.proficiency_rank_label", {
-				type: _loc("warden.character.FIELDS.path.skill.label"),
-			}),
-			domains: new Set(["skill"]),
-			defaultEnabled: true,
-
-			mode: "upgrade",
-			value: this.skill.is_major
-				? this.majorProficiencyRank
-				: this.minorProficiencyRank,
-		});
-		this.dynamic_effects.proficiency_rank.push({
-			label: _loc("warden.proficiency_rank_label", {
-				type: _loc("warden.character.FIELDS.path.special.label"),
-			}),
-			domains: new Set(["special"]),
-			defaultEnabled: true,
-
-			mode: "upgrade",
-			value: this.special.is_major
-				? this.majorProficiencyRank
-				: this.minorProficiencyRank,
-		});
-
-		this.dynamic_effects.proficiency_rank.push({
-			label: _loc("warden.proficiency_rank_label", {
-				type: _loc("warden.character.FIELDS.defense.toughness.label"),
-			}),
-			domains: new Set(["toughness"]),
-			defaultEnabled: true,
-
-			mode: "upgrade",
-			value: this.toughness.is_major
-				? this.majorProficiencyRank
-				: this.minorProficiencyRank,
-		});
-		this.dynamic_effects.proficiency_rank.push({
-			label: _loc("warden.proficiency_rank_label", {
-				type: _loc("warden.character.FIELDS.defense.resolve.label"),
-			}),
-			domains: new Set(["resolve"]),
-			defaultEnabled: true,
-
-			mode: "upgrade",
-			value: this.resolve.is_major
-				? this.majorProficiencyRank
-				: this.minorProficiencyRank,
-		});
-		this.dynamic_effects.proficiency_rank.push({
-			label: "Perception Rank",
-			domains: new Set(["perception"]),
-			defaultEnabled: true,
-
-			mode: "upgrade",
-			value: this.perception.is_major
-				? this.majorProficiencyRank
-				: this.minorProficiencyRank,
-		});
-
-		this.dynamic_effects.bonus.push({
-			label: "Untrained Proficiency",
-			domains: new Set(["untrained"]),
-
-			defaultEnabled: true,
-
-			modifier_type: "proficiency",
-
-			mode: "upgrade",
-			value: this.level / 2,
-		});
-		this.dynamic_effects.bonus.push({
-			label: "Combat Proficiency",
-			domains: new Set(["combat"]),
-			defaultEnabled: true,
-
-			modifier_type: "proficiency",
-
-			mode: "upgrade",
-			value: "@profCalc",
-		});
-		this.dynamic_effects.bonus.push({
-			label: "Skill Proficiency",
-			domains: new Set(["skill"]),
-			defaultEnabled: true,
-
-			modifier_type: "proficiency",
-
-			mode: "upgrade",
-			value: "@profCalc",
-		});
-		this.dynamic_effects.bonus.push({
-			label: "Special Proficiency",
-			domains: new Set(["special"]),
-			defaultEnabled: true,
-
-			modifier_type: "proficiency",
-
-			mode: "upgrade",
-			value: "@profCalc",
-		});
-		this.dynamic_effects.bonus.push({
-			label: "Toughness Proficiency",
-			domains: new Set(["toughness"]),
-			defaultEnabled: true,
-
-			modifier_type: "proficiency",
-
-			mode: "upgrade",
-			value: "@profCalc",
-		});
-		this.dynamic_effects.bonus.push({
-			label: "Resolve Proficiency",
-			domains: new Set(["resolve"]),
-			defaultEnabled: true,
-
-			modifier_type: "proficiency",
-
-			mode: "upgrade",
-			value: "@profCalc",
-		});
-		this.dynamic_effects.bonus.push({
-			label: "Perception Proficiency",
-			domains: new Set(["perception"]),
-			defaultEnabled: true,
-
-			modifier_type: "proficiency",
-
-			mode: "upgrade",
-			value: "@profCalc",
-		});
 	}
 
 	get majorProficiencyRank() {

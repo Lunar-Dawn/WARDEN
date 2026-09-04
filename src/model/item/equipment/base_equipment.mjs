@@ -1,5 +1,6 @@
+import { BaseItem } from "../base_item.mjs";
+
 const { NumberField, StringField, HTMLField } = foundry.data.fields;
-const { TypeDataModel } = foundry.abstract;
 
 /**
  * @typedef {"light"|"normal"|"heavy"|"huge"} Weight
@@ -11,7 +12,7 @@ const { TypeDataModel } = foundry.abstract;
  * @property {"light"|"normal"|"heavy"|"huge"} weight
  * @property {"undamaged"|"damaged"|"broken"} condition
  */
-export class BaseEquipment extends TypeDataModel {
+export class BaseEquipment extends BaseItem {
 	static LOCALIZATION_PREFIXES = ["warden.equipment"];
 
 	static isItemEquipment = (item) => {
@@ -20,6 +21,8 @@ export class BaseEquipment extends TypeDataModel {
 
 	static defineSchema() {
 		return {
+			...super.defineSchema(),
+
 			rarity: new NumberField({
 				required: true,
 				min: 0,
@@ -114,20 +117,6 @@ export class BaseEquipment extends TypeDataModel {
 
 	isEquipment() {
 		return true;
-	}
-
-	registerNewDynamicEffect(effect_location, effect) {
-		if (
-			!!this.parent &&
-			!!this.parent.actor &&
-			!!this.parent.actor.system &&
-			!!this.parent.actor.system.dynamic_effects &&
-			!!this.parent.actor.system.dynamic_effects[effect_location]
-		) {
-			this.parent.actor.system.dynamic_effects[effect_location].push(
-				effect,
-			);
-		}
 	}
 
 	get supportedTabs() {

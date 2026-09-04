@@ -98,10 +98,16 @@ export class Weapon extends BaseEquipment {
 		return properties;
 	}
 
-	prepareDerivedData() {
-		super.prepareDerivedData();
+	/**
+	 * Create the dynamic effects for the weapon dice and damage type
+	 *
+	 * @return {Generator<DynamicEffect>}
+	 */
+	*getDynamicEffects() {
+		yield* super.getDynamicEffects();
 
-		this.registerNewDynamicEffect("effect_die_size", {
+		yield {
+			type: "effect_die_size",
 			label: `${this.parent.name} Base Die Size`,
 			domains: new Set([`strike.${this.parent.id}.damage`]),
 			defaultEnabled: true,
@@ -110,10 +116,11 @@ export class Weapon extends BaseEquipment {
 
 			mode: "upgrade",
 			value: this.damage_die,
-		});
+		};
 
-		this.damage_types.forEach((damage_type) => {
-			this.registerNewDynamicEffect("effect_damage_type", {
+		for (const damage_type of this.damage_types) {
+			yield {
+				type: "effect_damage_type",
 				label: `${this.parent.name} Base Damage`,
 				domains: new Set([`strike.${this.parent.id}.damage`]),
 				defaultEnabled: true,
@@ -122,8 +129,8 @@ export class Weapon extends BaseEquipment {
 
 				mode: "add",
 				value: DAMAGE_TYPES[damage_type].abbreviation,
-			});
-		});
+			};
+		}
 	}
 
 	#weaponResolver(map, extra_domains = [], extra_discriminators = []) {
@@ -188,8 +195,14 @@ export class Weapon extends BaseEquipment {
 
 		const resolver = this.#weaponResolver(
 			map,
-			extra_domains.concat(this.parent.actor.system.getDomains(), !!target ? target.getDomains("target") : []),
-			extra_discriminators.concat(this.parent.actor.system.getDiscriminators(), !!target ? target.getDiscriminators("target") : []),
+			extra_domains.concat(
+				this.parent.actor.system.getDomains(),
+				!!target ? target.getDomains("target") : [],
+			),
+			extra_discriminators.concat(
+				this.parent.actor.system.getDiscriminators(),
+				!!target ? target.getDiscriminators("target") : [],
+			),
 		);
 
 		return runCheck(
@@ -200,7 +213,7 @@ export class Weapon extends BaseEquipment {
 				difficulty,
 				title,
 				against,
-				target
+				target,
 			},
 			{ skip },
 		);
@@ -248,15 +261,21 @@ export class Weapon extends BaseEquipment {
 
 		const target = getTarget();
 
-		[...extra_domains, ...this.parent.actor.system.getDomains(), ...(!!target ? target.getDomains("target") : [])]
-			.forEach((extra_domain) => {
-				domains.add(extra_domain);
-			});
-		[...extra_discriminators, ...this.parent.actor.system.getDiscriminators(), ...(!!target ? target.getDiscriminators("target") : [])]
-			.forEach((extra_discriminator) => {
-				discriminators.add(extra_discriminator);
-			});
-		
+		[
+			...extra_domains,
+			...this.parent.actor.system.getDomains(),
+			...(!!target ? target.getDomains("target") : []),
+		].forEach((extra_domain) => {
+			domains.add(extra_domain);
+		});
+		[
+			...extra_discriminators,
+			...this.parent.actor.system.getDiscriminators(),
+			...(!!target ? target.getDiscriminators("target") : []),
+		].forEach((extra_discriminator) => {
+			discriminators.add(extra_discriminator);
+		});
+
 		const resolver = this.parent.actor.system.getDynamicResultResolver(
 			domains,
 			discriminators,

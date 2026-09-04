@@ -82,9 +82,8 @@ export class EffectWindow extends HandlebarsApplicationMixin(ApplicationV2) {
 	}
 
 	static async #toggleModifier(_, target) {
-		const path = target.dataset.path;
 		const index = target.dataset.index;
-		this.manager.toggle(path, index);
+		this.manager.toggle(index);
 
 		this.render();
 	}

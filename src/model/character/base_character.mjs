@@ -16,7 +16,7 @@ const { TypeDataModel } = foundry.abstract;
  * @property {number} level
  * @property {{value: number, max: number}} hit_points
  * @property {{value: number, max: number}} strain
- * @property {Record<string, DynamicEffect[]>} dynamic_effects
+ * @property {DynamicEffect[]} dynamic_effects
  */
 export class BaseCharacterData extends TypeDataModel {
 	static LOCALIZATION_PREFIXES = ["warden.character"];
@@ -93,47 +93,146 @@ export class BaseCharacterData extends TypeDataModel {
 	/*|-------------------------------------Dynamic Result system implementation-------------------------------------|*/
 	/*================================================================================================================*/
 
-	/** TODO: Priority?
-	 * @typedef {
-	 *    "add"
-	 *  | "subtract"
-	 *  | "downgrade"
-	 *  | "upgrade"
-	 * } DynamicEffectMode
-	 */
-
-	/**
-	 * @typedef DynamicEffect
-	 * @property {string} label
-	 * @property {Set<string>} domains
-	 * @property {DynamicEffectMode} mode
-	 * @property {boolean|string|string[]} applicable_if
-	 * @property {any} value
-	 * @property {boolean?} defaultEnabled
-	 */
-
 	/**
 	 * Prepare the sets where effects are stored
 	 */
 	prepareDynamicEffects() {
-		/** @type {Record<string, DynamicEffect[]>} */
-		this.dynamic_effects = {
-			proficiency_rank: [],
-
-			bonus: [],
-			penalty: [],
-
-			effect_dice: [],
-			effect_die_size: [],
-			effect_potency: [],
-			effect_damage_type: [],
-
-			benefit: [],
-			detriment: [],
-		};
+		/** @type {DynamicEffect[]} */
+		this.dynamic_effects = [];
 
 		// I don't like this, but without a fake field it coerces all values to strings
 		this.dynamic_effect_field_type = new ArrayField(new AnyField());
+	}
+	prepareDerivedData() {
+		super.prepareDerivedData();
+
+		this.#collectDynamicEffects();
+	}
+
+	/**
+	 * This is the core of the dynamic effect distribution.
+	 * It's not complicated, but it is important; So here's how it works in "short".
+	 *
+	 * Dynamic effects are gathered from a series of generators defined on
+	 * the actor and item model classes. It adds all of these effects to
+	 * `this.dynamic_effects`, a flat array containing all of them.
+	 *
+	 * This function first iterates over the `getBaseDynamicEffects`
+	 * generator on the character, most likely an overload from a child class.
+	 * This defines the "basic" effects such as proficiency calculations
+	 * and base speed values. Those overloads are where effects without
+	 * a very clear origin should be created, see the CharacterData implementation
+	 * for a reasonable division.
+	 *
+	 * It then iterates over all the items owned by the Actor and iterates its
+	 * `getDynamicEffects` iterator. All `BaseItem`s have a store for custom written ones,
+	 * and overloads of this is where e.g. item trait's effects should be added.
+	 */
+	#collectDynamicEffects() {
+		for (const effect of this.getBaseDynamicEffects())
+			this.dynamic_effects.push(effect);
+
+		for (const item of this.parent.items)
+			if (item.system.getDynamicEffects !== undefined)
+				for (const effect of item.system.getDynamicEffects())
+					this.dynamic_effects.push(effect);
+	}
+
+	/**
+	 * Collect base effects for characters, should be extended in child classes
+	 *
+	 * @return {Generator<DynamicEffect>}
+	 */
+	*getBaseDynamicEffects() {
+		yield* this.#createProficiencyCalculationEffects();
+	}
+
+	/**
+	 * Create the dynamic effects that perform proficiency calculations
+	 *
+	 * @return {Generator<DynamicEffect>}
+	 */
+	*#createProficiencyCalculationEffects() {
+		yield {
+			type: "bonus",
+			label: "Combat Proficiency",
+			domains: new Set(["combat"]),
+			defaultEnabled: true,
+
+			modifier_type: "proficiency",
+
+			mode: "upgrade",
+			value: "@profCalc",
+		};
+		yield {
+			type: "bonus",
+			label: "Skill Proficiency",
+			domains: new Set(["skill"]),
+			defaultEnabled: true,
+
+			modifier_type: "proficiency",
+
+			mode: "upgrade",
+			value: "@profCalc",
+		};
+		yield {
+			type: "bonus",
+			label: "Special Proficiency",
+			domains: new Set(["special"]),
+			defaultEnabled: true,
+
+			modifier_type: "proficiency",
+
+			mode: "upgrade",
+			value: "@profCalc",
+		};
+		yield {
+			type: "bonus",
+			label: "Toughness Proficiency",
+			domains: new Set(["toughness"]),
+			defaultEnabled: true,
+
+			modifier_type: "proficiency",
+
+			mode: "upgrade",
+			value: "@profCalc",
+		};
+		yield {
+			type: "bonus",
+			label: "Resolve Proficiency",
+			domains: new Set(["resolve"]),
+			defaultEnabled: true,
+
+			modifier_type: "proficiency",
+
+			mode: "upgrade",
+			value: "@profCalc",
+		};
+		yield {
+			type: "bonus",
+			label: "Perception Proficiency",
+			domains: new Set(["perception"]),
+			defaultEnabled: true,
+
+			modifier_type: "proficiency",
+
+			mode: "upgrade",
+			value: "@profCalc",
+		};
+
+		// Base effect for the untrained button at the top of the character sheet
+		yield {
+			type: "bonus",
+			label: "Untrained Proficiency",
+			domains: new Set(["untrained"]),
+
+			defaultEnabled: true,
+
+			modifier_type: "proficiency",
+
+			mode: "upgrade",
+			value: Math.min(Math.floor(this.level / 2), 10),
+		};
 	}
 
 	getFieldForProperty(key) {
@@ -192,27 +291,23 @@ export class BaseCharacterData extends TypeDataModel {
 			? new Set(discriminators)
 			: discriminators;
 
-		const filtered_effects = {};
+		const filtered_effects = this.dynamic_effects.filter((e) => {
+			if (e.domains === undefined) {
+				return false;
+			}
+			if (Array.isArray(e.domains)) {
+				e.domains = new Set(e.domains);
+			}
 
-		for (const [type, effects] of Object.entries(this.dynamic_effects)) {
-			filtered_effects[type] = effects.filter((e) => {
-				if (e.domains === undefined) {
-					return false;
-				}
-				if (Array.isArray(e.domains)) {
-					e.domains = new Set(e.domains);
-				}
-
-				return !e.domains.isDisjointFrom(domain_set);
-			});
-		}
+			return !e.domains.isDisjointFrom(domain_set);
+		});
 
 		return new DynamicResultResolver(
 			domain_set,
 			discriminator_set,
 			filtered_effects,
 			{
-				origin: this
+				origin: this,
 			},
 		);
 	}

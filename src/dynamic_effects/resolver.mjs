@@ -2,11 +2,32 @@
  * @typedef {"proficiency_rank" | "bonus" | "penalty" | "effect_dice" | "effect_die_size" | "effect_potency" | "effect_damage_type" | "benefit" | "detriment"} DynamicEffectType
  */
 
+/** TODO: Priority?
+ * @typedef {
+ *    "add"
+ *  | "subtract"
+ *  | "downgrade"
+ *  | "upgrade"
+ * } DynamicEffectMode
+ */
+
+/**
+ * @typedef DynamicEffect
+ * @property {DynamicEffectType} type
+ * @property {string} label
+ * @property {Set<string>} domains
+ * @property {DynamicEffectMode} mode
+ * @property {boolean|string|string[]} [applicable_if]
+ * @property {any} value
+ * @property {boolean} [defaultEnabled]
+ * @property {ModifierType} [modifier_type]
+ */
+
 export class DynamicResultResolver {
 	/**
 	 * @param {Set<string>} domains
 	 * @param {Set<string>} discriminators
-	 * @param {Record<string, DynamicEffect[]>} effects
+	 * @param {DynamicEffect[]} effects
 	 * @param {Record<string, any>} data
 	 */
 	constructor(domains, discriminators, effects, data) {
@@ -17,19 +38,14 @@ export class DynamicResultResolver {
 
 		this.reset();
 
-		for (const effect_type of Object.values(this.effects)) {
-			for (const effect of effect_type) {
-				effect.enabled = effect.defaultEnabled ?? false;
-			}
+		for (const effect of this.effects) {
+			effect.enabled = effect.defaultEnabled ?? false;
 		}
 	}
 
 	get applicableEffects() {
-		return Object.fromEntries(
-			Object.entries(this.effects).map(([key, type]) => [
-				key,
-				type.filter((effect) => this.#isEffectApplicable(effect)),
-			]),
+		return this.effects.filter((effect) =>
+			this.#isEffectApplicable(effect),
 		);
 	}
 
@@ -50,7 +66,7 @@ export class DynamicResultResolver {
 
 	reset() {
 		this.results = {};
-		this.appliedEffects = {};
+		this.appliedEffects = [];
 	}
 	resolve(type) {
 		this.#resolveType(type);
@@ -79,7 +95,10 @@ export class DynamicResultResolver {
 	parseValue(value, extra_data = {}) {
 		if (typeof value === "string") {
 			const proficiency_rank = this.#resolveType("proficiency_rank");
-			const profCalc = proficiency_rank > 0 ? proficiency_rank + this.data.origin.level : Math.min(Math.floor(this.data.origin.level / 2), 10);
+			const profCalc =
+				proficiency_rank > 0
+					? proficiency_rank + this.data.origin.level
+					: Math.min(Math.floor(this.data.origin.level / 2), 10);
 
 			const data = {
 				profCalc,
@@ -92,7 +111,7 @@ export class DynamicResultResolver {
 				effect_damage_type: this.#resolveType("effect_damage_type"),
 				benefit: this.#resolveType("benefit"),
 				detriment: this.#resolveType("detriment"),
-				...extra_data
+				...extra_data,
 			};
 
 			try {
@@ -134,16 +153,18 @@ export class DynamicResultResolver {
 
 		this.results[type] = this.#getDefaultValue(type);
 
-		for (const effect of this.applicableEffects[type]) {
-			this.#resolveEffect(type, effect);
+		for (const effect of this.applicableEffects.filter(
+			(e) => e.type === type,
+		)) {
+			this.#resolveEffect(effect);
 		}
 
 		return this.results[type];
 	}
-	#resolveEffect(type, effect) {
+	#resolveEffect(effect) {
 		if (!effect.enabled) return;
 
-		if (this.#isEffectApplicable(effect)) this.#applyEffect(type, effect);
+		if (this.#isEffectApplicable(effect)) this.#applyEffect(effect);
 	}
 	#isEffectApplicable(effect) {
 		if (effect.applicable_if === undefined) return true;
@@ -158,76 +179,77 @@ export class DynamicResultResolver {
 		);
 	}
 
-	#getEffectTarget(type, effect) {
-		switch (type) {
+	#getEffectTarget(effect) {
+		switch (effect.type) {
 			case "bonus":
 			case "penalty":
 				return [
-					this.results[type][effect.modifier_type],
-					(v) => (this.results[type][effect.modifier_type] = v),
+					this.results[effect.type][effect.modifier_type],
+					(v) =>
+						(this.results[effect.type][effect.modifier_type] = v),
 				];
 			default:
-				return [this.results[type], (v) => (this.results[type] = v)];
+				return [
+					this.results[effect.type],
+					(v) => (this.results[effect.type] = v),
+				];
 		}
 	}
 
-	#overrideEffectApplied(type, effect) {
-		switch (type) {
+	#overrideEffectApplied(effect) {
+		switch (effect.type) {
 			case "bonus":
 			case "penalty":
-				this.appliedEffects[type] =
-					this.appliedEffects[type]?.filter(
-						(e) => e.modifier_type !== effect.modifier_type,
-					) ?? [];
-				this.appliedEffects[type].push(effect);
+				this.appliedEffects = this.appliedEffects.filter(
+					(e) =>
+						!(
+							e.type === effect.type &&
+							e.modifier_type === effect.modifier_type
+						),
+				);
+				this.appliedEffects.push(effect);
 				break;
 			default:
-				this.appliedEffects[type] = [effect];
+				this.appliedEffects.push(effect);
 				break;
 		}
 	}
 
 	/**
-	 *
-	 * @param {DynamicEffectType} type
 	 * @param {DynamicEffect} effect
 	 * @param {boolean} override
 	 */
-	#setEffectApplied(type, effect, override = false) {
+	#setEffectApplied(effect, override = false) {
 		if (override) {
-			this.#overrideEffectApplied(type, effect);
+			this.#overrideEffectApplied(effect);
 			return;
 		}
 
-		if (this.appliedEffects[type] === undefined) {
-			this.appliedEffects[type] = [];
-		}
-
-		this.appliedEffects[type].push(effect);
+		this.appliedEffects.push(effect);
 	}
-	#applyEffect(type, effect) {
-		let [accumulator, setter] = this.#getEffectTarget(type, effect);
+	#applyEffect(effect) {
+		let [accumulator, setter] = this.#getEffectTarget(effect);
 		const value = this.parseValue(effect.value);
 
 		switch (effect.mode) {
 			case "add":
 				setter(accumulator + value);
-				this.#setEffectApplied(type, effect);
+				this.#setEffectApplied(effect);
 				break;
 			case "subtract":
 				setter(accumulator - value);
-				this.#setEffectApplied(type, effect);
+				this.#setEffectApplied(effect);
 				break;
 			case "upgrade":
 				if (accumulator < value) {
 					setter(value);
-					this.#setEffectApplied(type, effect, true);
+					this.#setEffectApplied(effect, true);
 				}
 				break;
 			case "downgrade":
 				if (accumulator > value) {
 					setter(value);
-					this.#setEffectApplied(type, effect, true);
+					this.#setEffectApplied(effect, true);
 				}
 				break;
 		}

@@ -14,11 +14,17 @@ export class MookData extends BaseOpponentData {
 		};
 	}
 
-	prepareDerivedData() {
-		super.prepareDerivedData();
+	/**
+	 * Collect the dynamic effects that are specific to Mooks
+	 *
+	 * @return {Generator<DynamicEffect>}
+	 */
+	*getBaseDynamicEffects() {
+		yield* super.getBaseDynamicEffects();
 
 		if (this.is_elite) {
-			this.dynamic_effects.bonus.push({
+			yield {
+				type: "bonus",
 				label: "Elite",
 				domains: new Set([
 					"major-statistic",
@@ -37,7 +43,7 @@ export class MookData extends BaseOpponentData {
 
 				mode: "add",
 				value: 2,
-			});
+			};
 		}
 	}
 

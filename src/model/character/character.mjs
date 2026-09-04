@@ -432,7 +432,6 @@ export class CharacterData extends BaseCharacterData {
 
 		this.wealth = Math.min(this.wealth, this.vocation.value);
 
-		this.#prepareBaseDynamicEffects();
 		this.calculateBasicStats();
 	}
 	calculateBasicStats() {
@@ -482,157 +481,21 @@ export class CharacterData extends BaseCharacterData {
 		}
 	}
 
-	#prepareBaseDynamicEffects() {
-		this.#prepareCheckDynamicEffects();
-		this.#prepareStatisticDynamicEffects();
-		this.#prepareEffectRollDynamicEffects();
-	}
-	#prepareCheckDynamicEffects() {
-		this.dynamic_effects.proficiency_rank.push({
-			label: _loc("warden.proficiency_rank_label", {
-				type: _loc("warden.character.FIELDS.path.combat.label"),
-			}),
-			domains: new Set(["combat"]),
-			defaultEnabled: true,
+	/**
+	 * Collect the dynamic effects that are specific to PC sheets
+	 *
+	 * @return {Generator<DynamicEffect>}
+	 */
+	*getBaseDynamicEffects() {
+		yield* super.getBaseDynamicEffects();
 
-			mode: "upgrade",
-			value: this.path.combat.rank,
-		});
-		this.dynamic_effects.proficiency_rank.push({
-			label: _loc("warden.proficiency_rank_label", {
-				type: _loc("warden.character.FIELDS.path.skill.label"),
-			}),
-			domains: new Set(["skill-path", "skill.knowledge"]),
-			defaultEnabled: true,
+		yield* this.#createProficiencyDynamicEffects();
+		yield* this.#createStatisticDynamicEffects();
+		yield* this.#createStrikeDynamicEffects();
 
-			mode: "upgrade",
-			value: this.path.skill.rank,
-		});
-		for (const [name, data] of Object.entries(this.skill)) {
-			this.dynamic_effects.proficiency_rank.push({
-				label: _loc("warden.proficiency_rank_label", {
-					type: _loc("warden.character.FIELDS.path.skill.label"),
-				}),
-				domains: new Set([`skill.${name}`]),
-				defaultEnabled: true,
-
-				mode: "upgrade",
-				value: data.is_proficient ? this.path.skill.rank : 0,
-			});
-		}
-		this.dynamic_effects.proficiency_rank.push({
-			label: _loc("warden.proficiency_rank_label", {
-				type: _loc("warden.character.FIELDS.path.special.label"),
-			}),
-			domains: new Set(["special"]),
-			defaultEnabled: true,
-
-			mode: "upgrade",
-			value: this.path.special.rank,
-		});
-		this.dynamic_effects.proficiency_rank.push({
-			label: _loc("warden.proficiency_rank_label", {
-				type: _loc("warden.character.FIELDS.defense.toughness.label"),
-			}),
-			domains: new Set(["toughness"]),
-			defaultEnabled: true,
-
-			mode: "upgrade",
-			value: this.defense.toughness.rank,
-		});
-		this.dynamic_effects.proficiency_rank.push({
-			label: _loc("warden.proficiency_rank_label", {
-				type: _loc("warden.character.FIELDS.defense.resolve.label"),
-			}),
-			domains: new Set(["resolve"]),
-			defaultEnabled: true,
-
-			mode: "upgrade",
-			value: this.defense.resolve.rank,
-		});
-		this.dynamic_effects.proficiency_rank.push({
-			label: "Perception Rank",
-			domains: new Set(["perception"]),
-			defaultEnabled: true,
-
-			mode: "upgrade",
-			value: this.defense.perception.rank,
-		});
-
-		this.dynamic_effects.bonus.push({
-			label: "Untrained Proficiency",
-			domains: new Set(["untrained"]),
-
-			defaultEnabled: true,
-
-			modifier_type: "proficiency",
-
-			mode: "upgrade",
-			value: Math.min(Math.floor(this.level / 2), 10),
-		});
-
-		this.dynamic_effects.bonus.push({
-			label: "Combat Proficiency",
-			domains: new Set(["combat"]),
-			defaultEnabled: true,
-
-			modifier_type: "proficiency",
-
-			mode: "upgrade",
-			value: "@profCalc",
-		});
-		this.dynamic_effects.bonus.push({
-			label: "Skill Proficiency",
-			domains: new Set(["skill"]),
-			defaultEnabled: true,
-
-			modifier_type: "proficiency",
-
-			mode: "upgrade",
-			value: "@profCalc",
-		});
-		this.dynamic_effects.bonus.push({
-			label: "Special Proficiency",
-			domains: new Set(["special"]),
-			defaultEnabled: true,
-
-			modifier_type: "proficiency",
-
-			mode: "upgrade",
-			value: "@profCalc",
-		});
-		this.dynamic_effects.bonus.push({
-			label: "Toughness Proficiency",
-			domains: new Set(["toughness"]),
-			defaultEnabled: true,
-
-			modifier_type: "proficiency",
-
-			mode: "upgrade",
-			value: "@profCalc",
-		});
-		this.dynamic_effects.bonus.push({
-			label: "Resolve Proficiency",
-			domains: new Set(["resolve"]),
-			defaultEnabled: true,
-
-			modifier_type: "proficiency",
-
-			mode: "upgrade",
-			value: "@profCalc",
-		});
-		this.dynamic_effects.bonus.push({
-			label: "Perception Proficiency",
-			domains: new Set(["perception"]),
-			defaultEnabled: true,
-
-			modifier_type: "proficiency",
-
-			mode: "upgrade",
-			value: "@profCalc",
-		});
-
-		this.dynamic_effects.penalty.push({
+		// Effect counting the mobility penalty from heavy items
+		yield {
+			type: "penalty",
 			label: "Heavy Items",
 			domains: new Set(["skill.mobility"]),
 			defaultEnabled: true,
@@ -645,10 +508,103 @@ export class CharacterData extends BaseCharacterData {
 					x.system.weight &&
 					(x.system.weight == "heavy" || x.system.weight == "huge"),
 			).length,
-		});
+		};
 	}
-	#prepareStatisticDynamicEffects() {
-		this.dynamic_effects.bonus.push({
+	/**
+	 * Create the dynamic effects to reflect invested pips on the sheet
+	 *
+	 * @return {Generator<DynamicEffect>}
+	 */
+	*#createProficiencyDynamicEffects() {
+		yield {
+			type: "proficiency_rank",
+			label: _loc("warden.proficiency_rank_label", {
+				type: _loc("warden.character.FIELDS.path.combat.label"),
+			}),
+			domains: new Set(["combat"]),
+			defaultEnabled: true,
+
+			mode: "upgrade",
+			value: this.path.combat.rank,
+		};
+		yield {
+			type: "proficiency_rank",
+			label: _loc("warden.proficiency_rank_label", {
+				type: _loc("warden.character.FIELDS.path.skill.label"),
+			}),
+			domains: new Set(["skill-path", "skill.knowledge"]),
+			defaultEnabled: true,
+
+			mode: "upgrade",
+			value: this.path.skill.rank,
+		};
+		for (const [name, data] of Object.entries(this.skill)) {
+			yield {
+				type: "proficiency_rank",
+				label: _loc("warden.proficiency_rank_label", {
+					type: _loc("warden.character.FIELDS.path.skill.label"),
+				}),
+				domains: new Set([`skill.${name}`]),
+				defaultEnabled: true,
+
+				mode: "upgrade",
+				value: data.is_proficient ? this.path.skill.rank : 0,
+			};
+		}
+		yield {
+			type: "proficiency_rank",
+			label: _loc("warden.proficiency_rank_label", {
+				type: _loc("warden.character.FIELDS.path.special.label"),
+			}),
+			domains: new Set(["special"]),
+			defaultEnabled: true,
+
+			mode: "upgrade",
+			value: this.path.special.rank,
+		};
+
+		yield {
+			type: "proficiency_rank",
+			label: _loc("warden.proficiency_rank_label", {
+				type: _loc("warden.character.FIELDS.defense.toughness.label"),
+			}),
+			domains: new Set(["toughness"]),
+			defaultEnabled: true,
+
+			mode: "upgrade",
+			value: this.defense.toughness.rank,
+		};
+		yield {
+			type: "proficiency_rank",
+			label: _loc("warden.proficiency_rank_label", {
+				type: _loc("warden.character.FIELDS.defense.resolve.label"),
+			}),
+			domains: new Set(["resolve"]),
+			defaultEnabled: true,
+
+			mode: "upgrade",
+			value: this.defense.resolve.rank,
+		};
+		yield {
+			type: "proficiency_rank",
+			label: _loc("warden.proficiency_rank_label", {
+				type: _loc("warden.character.FIELDS.defense.perception.label"),
+			}),
+			domains: new Set(["perception"]),
+			defaultEnabled: true,
+
+			mode: "upgrade",
+			value: this.defense.perception.rank,
+		};
+	}
+	/**
+	 * Create the dynamic effects for the basic numerical stats
+	 *
+	 * @return {Generator<DynamicEffect>}
+	 */
+	*#createStatisticDynamicEffects() {
+		yield {
+			type: "bonus",
 			label: "Base Hit Points",
 			domains: new Set(["hit_points"]),
 			defaultEnabled: true,
@@ -657,8 +613,9 @@ export class CharacterData extends BaseCharacterData {
 
 			mode: "upgrade",
 			value: 10 + this.defense.toughness.rank * 2,
-		});
-		this.dynamic_effects.bonus.push({
+		};
+		yield {
+			type: "bonus",
 			label: "Base Strain Points",
 			domains: new Set(["strain_points"]),
 			defaultEnabled: true,
@@ -667,8 +624,9 @@ export class CharacterData extends BaseCharacterData {
 
 			mode: "upgrade",
 			value: 10 + this.defense.resolve.rank * 2,
-		});
-		this.dynamic_effects.bonus.push({
+		};
+		yield {
+			type: "bonus",
 			label: "Base Speed",
 			domains: new Set(["base_speed"]),
 			defaultEnabled: true,
@@ -677,10 +635,16 @@ export class CharacterData extends BaseCharacterData {
 
 			mode: "upgrade",
 			value: 5,
-		});
+		};
 	}
-	#prepareEffectRollDynamicEffects() {
-		this.dynamic_effects.effect_dice.push({
+	/**
+	 * Create the dynamic effects that define some base statistics for strikes
+	 *
+	 * @return {Generator<DynamicEffect>}
+	 */
+	*#createStrikeDynamicEffects() {
+		yield {
+			type: "effect_dice",
 			label: "Base Strike Dice",
 			domains: new Set(["strike.damage"]),
 			defaultEnabled: true,
@@ -689,8 +653,9 @@ export class CharacterData extends BaseCharacterData {
 
 			mode: "add",
 			value: Math.max(this.path.combat.rank, 1),
-		});
-		this.dynamic_effects.effect_die_size.push({
+		};
+		yield {
+			type: "effect_die_size",
 			label: "Base Strike Die Size",
 			domains: new Set(["strike.damage"]),
 			defaultEnabled: true,
@@ -699,8 +664,9 @@ export class CharacterData extends BaseCharacterData {
 
 			mode: "upgrade",
 			value: 4,
-		});
-		this.dynamic_effects.effect_potency.push({
+		};
+		yield {
+			type: "effect_potency",
 			label: "Base Strike Potency",
 			domains: new Set(["strike.damage"]),
 			defaultEnabled: true,
@@ -709,9 +675,10 @@ export class CharacterData extends BaseCharacterData {
 
 			mode: "add",
 			value: 1,
-		});
+		};
 
-		this.dynamic_effects.proficiency_rank.push({
+		yield {
+			type: "proficiency_rank",
 			label: _loc("warden.proficiency_rank_label", {
 				type: _loc("warden.character.FIELDS.path.combat.label"),
 			}),
@@ -721,8 +688,9 @@ export class CharacterData extends BaseCharacterData {
 
 			mode: "upgrade",
 			value: this.path.combat.rank,
-		});
-		this.dynamic_effects.bonus.push({
+		};
+		yield {
+			type: "bonus",
 			label: "Combat Proficiency",
 			domains: new Set(["strike.damage"]),
 			applicable_if: ["strike.melee"],
@@ -732,7 +700,7 @@ export class CharacterData extends BaseCharacterData {
 
 			mode: "upgrade",
 			value: "@profCalc",
-		});
+		};
 	}
 
 	// TODO: add effect parameter for all of these when the system's worked out

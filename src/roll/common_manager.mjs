@@ -18,11 +18,12 @@ export class CommonManager {
 
 	/**
 	 * Disabled all modifiers of a give type and sign
-	 * @param {string} path
+	 * @param {string} type
 	 * @param {ModifierType} modifierType
 	 */
-	#disableModifierType(path, modifierType) {
-		this.resolver.effects[path]
+	#disableModifierType(type, modifierType) {
+		this.resolver.effects
+			.filter((m) => m.type === type)
 			.filter((m) => m.modifier_type === modifierType)
 			.forEach((m) => (m.enabled = false));
 	}
@@ -32,14 +33,15 @@ export class CommonManager {
 	 * @param {PendingEffect} pendingEffect
 	 */
 	addModifier(pendingEffect) {
-		const path = pendingEffect.value < 0 ? "penalty" : "bonus";
+		const type = pendingEffect.value < 0 ? "penalty" : "bonus";
 
 		if (pendingEffect.modifier_type !== "universal") {
-			this.#disableModifierType(path, pendingEffect.modifier_type);
+			this.#disableModifierType(type, pendingEffect.modifier_type);
 		}
 
 		/** @type DynamicEffect */
 		const newEffect = {
+			type: type,
 			label: pendingEffect.label,
 			mode:
 				pendingEffect.modifier_type === "universal" ? "add" : "upgrade",
@@ -52,21 +54,20 @@ export class CommonManager {
 			value: Math.abs(pendingEffect.value),
 		};
 
-		this.resolver.effects[path].push(newEffect);
+		this.resolver.effects.push(newEffect);
 		this.resolver.reset();
 	}
 
 	/**
 	 * Toggle the effect, will disable all others of type and sign if needed.
-	 * @param {string} path
 	 * @param {string} index
 	 */
-	toggle(path, index) {
-		const effect = this.resolver.effects[path][index];
+	toggle(index) {
+		const effect = this.resolver.effects[index];
 
 		// If we're enabling a non-universal modifier we disable all with the same type and sign first
 		if (!effect.enabled && effect.modifier_type !== "universal") {
-			this.#disableModifierType(path, effect.modifier_type);
+			this.#disableModifierType(effect.type, effect.modifier_type);
 		}
 
 		effect.enabled = !effect.enabled;
@@ -105,8 +106,10 @@ const modifierSort = (a, b) => {
 	);
 };
 export const transformEffectsForDisplay = (effects, resolver) => {
-	const annotatedBonuses =
-		effects.bonus?.map((e, i) => ({
+	const annotatedBonuses = effects
+		.map((e, i) => [e, i])
+		.filter(([e, _]) => e.type === "bonus")
+		.map(([e, i]) => ({
 			path: "bonus",
 			index: i,
 			modifier_type: e.modifier_type,
@@ -114,9 +117,11 @@ export const transformEffectsForDisplay = (effects, resolver) => {
 			label: e.label ?? "",
 			value: resolver.parseValue(e.value),
 			enabled: e.enabled,
-		})) ?? [];
-	const annotatedPenalties =
-		effects.penalty?.map((e, i) => ({
+		}));
+	const annotatedPenalties = effects
+		.map((e, i) => [e, i])
+		.filter(([e, _]) => e.type === "penalty")
+		.map(([e, i]) => ({
 			path: "penalty",
 			index: i,
 			modifier_type: e.modifier_type,
@@ -124,10 +129,12 @@ export const transformEffectsForDisplay = (effects, resolver) => {
 			label: e.label ?? "",
 			value: -resolver.parseValue(e.value),
 			enabled: e.enabled,
-		})) ?? [];
+		}));
 
-	const annotatedDice =
-		effects.effect_dice?.map((e, i) => ({
+	const annotatedDice = effects
+		.map((e, i) => [e, i])
+		.filter(([e, _]) => e.type === "effect_dice")
+		.map(([e, i]) => ({
 			path: "effect_dice",
 			index: i,
 			modifier_type: "universal",
@@ -137,9 +144,11 @@ export const transformEffectsForDisplay = (effects, resolver) => {
 			postfix: "d",
 			pretty_type: "effect_dice",
 			enabled: e.enabled,
-		})) ?? [];
-	const annotatedDieSize =
-		effects.effect_die_size?.map((e, i) => ({
+		}));
+	const annotatedDieSize = effects
+		.map((e, i) => [e, i])
+		.filter(([e, _]) => e.type === "effect_die_size")
+		.map(([e, i]) => ({
 			path: "effect_die_size",
 			index: i,
 			modifier_type: "universal",
@@ -149,9 +158,11 @@ export const transformEffectsForDisplay = (effects, resolver) => {
 			prefix: "d",
 			pretty_type: "effect_die_size",
 			enabled: e.enabled,
-		})) ?? [];
-	const annotatedPotency =
-		effects.effect_potency?.map((e, i) => ({
+		}));
+	const annotatedPotency = effects
+		.map((e, i) => [e, i])
+		.filter(([e, _]) => e.type === "effect_potency")
+		.map(([e, i]) => ({
 			path: "effect_potency",
 			index: i,
 			modifier_type: "universal",
@@ -161,9 +172,11 @@ export const transformEffectsForDisplay = (effects, resolver) => {
 			prefix: "P",
 			pretty_type: "effect_potency",
 			enabled: e.enabled,
-		})) ?? [];
-	const annotatedDamageType =
-		effects.effect_damage_type?.map((e, i) => ({
+		}));
+	const annotatedDamageType = effects
+		.map((e, i) => [e, i])
+		.filter(([e, _]) => e.type === "effect_damage_type")
+		.map(([e, i]) => ({
 			path: "effect_damage_type",
 			index: i,
 			modifier_type: "universal",
@@ -172,7 +185,7 @@ export const transformEffectsForDisplay = (effects, resolver) => {
 			value: resolver.parseValue(e.value),
 			pretty_type: "effect_damage_type",
 			enabled: e.enabled,
-		})) ?? [];
+		}));
 
 	const modifiers = [
 		...annotatedBonuses,
@@ -194,4 +207,4 @@ export const transformEffectsForDisplay = (effects, resolver) => {
  */
 export const getTarget = () => {
 	return game.user.targets.first()?.actor.system;
-}
+};

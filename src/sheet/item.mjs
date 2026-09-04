@@ -86,16 +86,12 @@ export class WARDENItemSheet extends HandlebarsApplicationMixin(ItemSheet) {
 					);
 				break;
 			case "effects":
-				context.effects = this.item.effects
-					.filter((e) => e.changes.length > 0)
-					.map((e) => ({
-						effect: e,
-						change_string: JSON.stringify(
-							e.changes[0].value,
-							null,
-							4,
-						),
-					}));
+				context.effects = Object.entries(
+					this.item.system.dynamic_effects,
+				).map(([key, effect]) => ({
+					id: key,
+					effect_string: JSON.stringify(effect, null, 4),
+				}));
 				context.effect_types = {
 					"system.dynamic_effects.proficiency_rank":
 						"Proficiency Rank",
@@ -117,43 +113,40 @@ export class WARDENItemSheet extends HandlebarsApplicationMixin(ItemSheet) {
 		return context;
 	}
 
+	// TODO: More graceful error handling
 	static async #effectFormHandler(e, form, data) {
-		if (e.type !== "submit") return;
+		if (e.type !== "submit" || data.object.id === undefined) return;
 
 		// Dirty hack since Foundry breaks FormData.getAll
-		const keys = [].concat(data.object.key);
+		const ids = [].concat(data.object.id);
 		const values = [].concat(data.object.value);
 
-		const updates = [].concat(data.object.id).map((id, index) => ({
-			_id: id,
-			"system.changes": [
-				{
-					key: keys[index],
-					value: JSON.parse(values[index]),
-				},
-			],
-		}));
+		const updates = Object.fromEntries(
+			ids.map((id, index) => [
+				`system.dynamic_effects.${id}`,
+				new foundry.data.operators.ForcedReplacement(
+					JSON.parse(values[index]),
+				),
+			]),
+		);
 
-		await foundry.documents.modifyBatch([
-			{
-				action: "update",
-				documentName: "ActiveEffect",
-				updates,
-				parent: this.item,
-			},
-		]);
+		await this.item.update(updates);
 	}
 	static async newEffect() {
-		await ActiveEffect.create(
-			getBaseActiveEffect(this.item.name, "bonus"),
-			{ parent: this.item },
-		);
+		await this.item.update({
+			[`system.dynamic_effects.${foundry.utils.randomID()}`]: {
+				label: this.item.name,
+			},
+		});
 		this.render({ parts: ["effects"] });
 	}
-	static async deleteEffect(e, target) {
+	static async deleteEffect(_, target) {
 		const id = target.closest("[data-id]").dataset.id;
 
-		await this.item.deleteEmbeddedDocuments("ActiveEffect", [id]);
+		await this.item.update({
+			[`system.dynamic_effects.${id}`]:
+				new foundry.data.operators.ForcedDeletion(),
+		});
 
 		this.render({ parts: ["effects"] });
 	}

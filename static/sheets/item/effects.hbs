@@ -1,27 +1,18 @@
 <section class="tab scrollable {{ tab.cssClass }}" data-group="primary" data-tab="effects">
-	N.B: This whole system is very much under review, keep in mind that the risk of it getting completely rewritten (and thus breaking anything you've done here) is far from 0%. Please test it out and give feedback on what works and doesn't work, but don't go implementing tons of things that might get lost. (There's a lot of things it can't do anyhow)
 	<form class="grid effects">
 		{{#each effects}}
 			<div class="grid col-subgrid col-span-3">
-				<label class="grid col-subgrid col-span-2">
-					<header>Type</header>
-					<select name="key">
-						{{selectOptions
-							@root.effect_types
-							selected=effect.changes.0.key
-						}}
-					</select>
-				</label>
-				<button type="button" data-action="deleteEffect" data-id="{{ effect.id }}">
+				<button type="button" data-action="deleteEffect" data-id="{{ id }}">
 					<i class="fa-solid fa-trash-can"></i>
 				</button>
+
+				<input type="hidden" name="id" value="{{ id }}" />
 				<div class="col-span-3 textarea-grow">
 					<!-- TODO: Auto-size -->
 					<textarea name="value">
-						{{~change_string~}}
+						{{~effect_string~}}
 					</textarea>
 				</div>
-				<input type="hidden" name="id" value="{{ effect.id }}" />
 			</div>
 		{{/each}}
 		<button class="col-span-3" type="button" data-action="newEffect">New</button>

@@ -18,4 +18,28 @@ export class BaseItem extends TypeDataModel {
 	*getDynamicEffects() {
 		yield* Object.values(this.dynamic_effects);
 	}
+
+	/**
+	 * Returns a list of domains that describe the current status of the item.
+	 *
+	 * @param {string} prefix A custom prefix to differentiate domains. Defaults to `item`.
+	 * @returns {string[]} The relevant domains to the item.
+	 */
+	getDomains(prefix = "") {
+		const determined_prefix = prefix.length > 0 ? prefix : "item";
+
+		return [];
+	}
+
+	/**
+ * Returns a list of discriminators that describe the current status of the item.
+ *
+ * @param {string} prefix A custom prefix to differentiate discriminators. Defaults to `item`.
+ * @returns {string[]} The relevant discriminators to the item.
+ */
+	getDiscriminators(prefix = "") {
+		const determined_prefix = prefix.length > 0 ? prefix : "item";
+
+		return [];
+	}
 }

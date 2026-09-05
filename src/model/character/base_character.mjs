@@ -136,6 +136,16 @@ export class BaseCharacterData extends TypeDataModel {
 			if (item.system.getDynamicEffects !== undefined)
 				for (const effect of item.system.getDynamicEffects())
 					this.dynamic_effects.push(effect);
+
+		for (const trait in WARDEN.WEAPON_TRAITS) {
+			if (!Object.hasOwn(WARDEN.WEAPON_TRAITS, trait)) continue;
+			const traitData = WARDEN.WEAPON_TRAITS[trait];
+
+			if (traitData.dynamic_effects.length === 0) continue;
+
+			for (const effect of traitData.dynamic_effects)
+				this.dynamic_effects.push(effect);
+		}
 	}
 
 	/**

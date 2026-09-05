@@ -1,6 +1,6 @@
 import { BaseItem } from "../base_item.mjs";
 
-const { NumberField, StringField, HTMLField } = foundry.data.fields;
+const { NumberField, StringField, HTMLField, ArrayField } = foundry.data.fields;
 
 /**
  * @typedef {"light"|"normal"|"heavy"|"huge"} Weight
@@ -55,6 +55,14 @@ export class BaseEquipment extends BaseItem {
 			description: new HTMLField({
 				required: true,
 			}),
+
+			traits: new ArrayField(
+				new StringField({}),
+				{
+					required: true,
+					initial: [],
+				}
+			)
 		};
 	}
 
@@ -121,5 +129,12 @@ export class BaseEquipment extends BaseItem {
 
 	get supportedTabs() {
 		return ["description", "properties", "traits", "effects"];
+	}
+
+	getDiscriminators(prefix = "") {
+		const determined_prefix = prefix.length > 0 ? prefix : "item";
+		const discriminators = super.getDiscriminators(determined_prefix);
+
+		return discriminators.concat(this.traits.map((trait) => `${determined_prefix}.trait.${trait}`));
 	}
 }

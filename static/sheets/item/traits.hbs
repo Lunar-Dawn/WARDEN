@@ -1,3 +1,14 @@
 <section class="tab scrollable {{ tab.cssClass }}" data-group="primary" data-tab="traits">
-	<section class="grid">Traits</section>
+	<section class="property-grid trait-grid">
+		{{#each traits}}
+		<div class="form-group grid col-span-2 col-subgrid align-center">
+			<label for="trait-{{ slug }}">{{localize label }}</label>
+			<div class="form-fields">
+				<input type="checkbox" {{#if enabled}}checked{{/if}} {{#unless available}}disabled{{/unless}}
+					data-change-trait="{{ slug }}" name="trait-{{ slug }}" />
+			</div>
+			<div class="hint col-span-2">{{{ desc }}}</div>
+		</div>
+		{{/each}}
+	</section>
 </section>

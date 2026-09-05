@@ -24,11 +24,13 @@ import { CharacterSheet } from "./sheet/character.mjs";
 import { EquipmentSheet } from "./sheet/equipment.mjs";
 import { ConditionSheet } from "./sheet/condition.mjs";
 import { OpponentSheet } from "./sheet/opponent.mjs";
+import { WEAPON_TRAITS } from "./model/util/equipment_traits.mjs";
 
 globalThis["WARDEN"] = {};
 globalThis["WARDEN"].DAMAGE_TYPES = DAMAGE_TYPES;
 globalThis["WARDEN"].DAMAGE_TYPE_CHOICES = DAMAGE_TYPE_CHOICES;
 globalThis["WARDEN"].DAMAGE_CATEGORY_CHOICES = DAMAGE_CATEGORY_CHOICES;
+globalThis["WARDEN"].WEAPON_TRAITS = WEAPON_TRAITS;
 
 Hooks.once("init", () => {
 	CONFIG.Actor.dataModels.character = CharacterData;

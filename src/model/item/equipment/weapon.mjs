@@ -71,6 +71,10 @@ export class Weapon extends BaseEquipment {
 		};
 	}
 
+	get traitOptions() {
+		return WARDEN.WEAPON_TRAITS;
+	}
+
 	getProperties() {
 		const properties = { ...super.getProperties() };
 
@@ -103,7 +107,7 @@ export class Weapon extends BaseEquipment {
 	 *
 	 * @return {Generator<DynamicEffect>}
 	 */
-	*getDynamicEffects() {
+	* getDynamicEffects() {
 		yield* super.getDynamicEffects();
 
 		yield {
@@ -135,6 +139,7 @@ export class Weapon extends BaseEquipment {
 
 	#weaponResolver(map, extra_domains = [], extra_discriminators = []) {
 		const domains = new Set([
+			"attack",
 			"strike",
 			"strike.attack",
 			`strike.${this.parent.id}.attack`,
@@ -158,9 +163,23 @@ export class Weapon extends BaseEquipment {
 			discriminators.add(extra_discriminator);
 		});
 
-		return this.parent.actor.system.proficiencyCheckResolver("combat", {
+		// Expand as needed to let traits muck around with resolving.
+		let resolving_details = {
+			proficiency: "combat",
 			domains,
-			discriminators,
+			discriminators
+		}
+
+		for (const trait of this.traits) {
+			console.log(trait);
+			console.log(WARDEN.WEAPON_TRAITS[trait]);
+			if (WARDEN.WEAPON_TRAITS[trait] && WARDEN.WEAPON_TRAITS[trait].preresolve_cb)
+				WARDEN.WEAPON_TRAITS[trait].preresolve_cb(this, resolving_details)
+		}
+
+		return this.parent.actor.system.proficiencyCheckResolver(resolving_details.proficiency, {
+			domains: resolving_details.domains,
+			discriminators: resolving_details.discriminators,
 		});
 	}
 
@@ -196,10 +215,12 @@ export class Weapon extends BaseEquipment {
 		const resolver = this.#weaponResolver(
 			map,
 			extra_domains.concat(
+				this.getDomains("attack"),
 				this.parent.actor.system.getDomains(),
 				!!target ? target.getDomains("target") : [],
 			),
 			extra_discriminators.concat(
+				this.getDiscriminators("attack"),
 				this.parent.actor.system.getDiscriminators(),
 				!!target ? target.getDiscriminators("target") : [],
 			),

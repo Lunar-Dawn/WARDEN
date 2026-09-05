@@ -478,8 +478,21 @@
 			"special": "Special"
 		},
 
-		"ui": {
-			"effect_roll_button": "Roll Effect"
+		"traits": {
+			"weapon": {
+				"activated": {
+					"label": "Activated",
+					"desc": "<p>Drawing the weapon requires an additional <strong>Interact</strong> action to activate it.</p>"
+				},
+				"advanced": {
+					"label": "Advanced",
+					"desc": "<p>You must be at least <strong>Adept (+3)</strong> in <strong>Combat</strong> to use the weapon proficiently.</p>"
+				},
+				"agile": {
+					"label": "Agile",
+					"desc": "<p>Cannot be applied to Heavy or Huge weapons. You gain a <strong>+2 Universal Bonus</strong> to <strong>Attacks</strong> that have <strong>Multiple Attack Penalty.</strong></p>"
+				}
+			}
 		}
 	}
 }

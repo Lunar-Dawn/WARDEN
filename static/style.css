@@ -137,13 +137,15 @@
 			width: 100px;
 			height: 100%;
 
-			background: linear-gradient(110deg,
-					transparent 0%,
-					transparent calc(50% - 2px),
-					#000 calc(50% - 1px),
-					#000 calc(50% + 1px),
-					transparent calc(50% + 2px),
-					transparent 100%);
+			background: linear-gradient(
+				110deg,
+				transparent 0%,
+				transparent calc(50% - 2px),
+				#000 calc(50% - 1px),
+				#000 calc(50% + 1px),
+				transparent calc(50% + 2px),
+				transparent 100%
+			);
 		}
 	}
 
@@ -204,7 +206,7 @@
 .textarea-auto-size-wrapper {
 	display: grid;
 
-	>textarea {
+	> textarea {
 		resize: none;
 		overflow: hidden;
 	}
@@ -215,7 +217,7 @@
 		visibility: hidden;
 	}
 
-	>textarea,
+	> textarea,
 	&::after {
 		border: 0;
 		padding: 0.5rem;
@@ -248,7 +250,6 @@
 
 /* Actor sheet classes */
 .actor-sheet {
-
 	input,
 	textarea {
 		border-radius: 0;
@@ -389,7 +390,7 @@
 
 			align-items: center;
 
-			>span {
+			> span {
 				height: 1lh;
 			}
 
@@ -436,7 +437,7 @@
 	}
 
 	.inventory-grid {
-		>div {
+		> div {
 			min-height: 2lh;
 
 			padding: 0.25em 1ch;
@@ -528,12 +529,12 @@
 
 			transition: grid-template-rows 0.3s ease;
 
-			>div {
+			> div {
 				min-height: 0;
 			}
 		}
 
-		.expanded>.content {
+		.expanded > .content {
 			grid-template-rows: 1fr;
 			overflow-y: visible;
 
@@ -616,8 +617,11 @@
 		}
 
 		.hint {
-			margin-top: -1.3ch;
 			color: var(--color-form-hint);
+
+			> *:first-child {
+				margin-top: 0;
+			}
 		}
 	}
 

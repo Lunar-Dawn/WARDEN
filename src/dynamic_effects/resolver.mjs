@@ -175,8 +175,23 @@ export class DynamicResultResolver {
 
 		// TODO: More complex resolution mechanics
 		return effect.applicable_if.every((cond) =>
-			this.discriminators.has(cond),
+			this.#resolveDiscriminator(this.discriminators, cond),
 		);
+	}
+
+	#resolveDiscriminator(discriminators, condition) {
+		console.log("Examining", condition);
+		if (typeof condition === "string")
+			return discriminators.has(condition)
+		if (typeof condition === "boolean") // ...Sure.
+			return condition;
+
+		if (typeof condition === "object") {
+			if (Object.hasOwn(condition, "not"))
+				return !this.#resolveDiscriminator(discriminators, condition.not);
+		}
+
+		return false;
 	}
 
 	#getEffectTarget(effect) {

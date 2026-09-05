@@ -180,7 +180,6 @@ export class DynamicResultResolver {
 	}
 
 	#resolveDiscriminator(discriminators, condition) {
-		console.log("Examining", condition);
 		if (typeof condition === "string")
 			return discriminators.has(condition)
 		if (typeof condition === "boolean") // ...Sure.

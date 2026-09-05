@@ -295,11 +295,8 @@ export class BaseCharacterData extends TypeDataModel {
 			if (e.domains === undefined) {
 				return false;
 			}
-			if (Array.isArray(e.domains)) {
-				e.domains = new Set(e.domains);
-			}
-
-			return !e.domains.isDisjointFrom(domain_set);
+			const effect_domains = Array.isArray(e.domains) ? new Set(e.domains) : e.domains;
+			return !effect_domains.isDisjointFrom(domain_set);
 		});
 
 		return new DynamicResultResolver(

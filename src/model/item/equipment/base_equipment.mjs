@@ -1,6 +1,6 @@
 import { BaseItem } from "../base_item.mjs";
 
-const { NumberField, StringField, HTMLField, ArrayField } = foundry.data.fields;
+const { NumberField, StringField, HTMLField, SetField } = foundry.data.fields;
 
 /**
  * @typedef {"light"|"normal"|"heavy"|"huge"} Weight
@@ -56,14 +56,20 @@ export class BaseEquipment extends BaseItem {
 				required: true,
 			}),
 
-			traits: new ArrayField(
-				new StringField({}),
+			traits: new SetField(
+				new StringField({
+					choices: this.constructor.traitOptions
+				}),
 				{
 					required: true,
 					initial: [],
 				}
 			)
 		};
+	}
+
+	static get traitOptions() {
+		return {};
 	}
 
 	/**

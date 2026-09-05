@@ -20,7 +20,7 @@ export class EquipmentSheet extends WARDENItemSheet {
 			const traits = this.item.system.traits.filter(x => x !== changed_trait);
 
 			if (src_element.checked) {
-				traits.push(changed_trait);
+				traits.add(changed_trait);
 			}
 
 			await this.item.update({
@@ -36,7 +36,7 @@ export class EquipmentSheet extends WARDENItemSheet {
 
 		switch (partId) {
 			case "traits":
-				const traitOptions = this.item.system.traitOptions;
+				const traitOptions = this.item.system.constructor.traitOptions;
 				context.traits = [];
 
 				for (const trait in traitOptions) {
@@ -49,7 +49,7 @@ export class EquipmentSheet extends WARDENItemSheet {
 						label: traitData.label,
 						desc: game.i18n.localize(traitData.desc),
 						available: traitData.validity_cb ? traitData.validity_cb(this.item.system) : true,
-						enabled: this.item.system.traits.includes(trait)
+						enabled: this.item.system.traits.has(trait)
 					})
 				};
 				break;

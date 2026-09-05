@@ -71,7 +71,7 @@ export class Weapon extends BaseEquipment {
 		};
 	}
 
-	get traitOptions() {
+	static get traitOptions() {
 		return WARDEN.WEAPON_TRAITS;
 	}
 

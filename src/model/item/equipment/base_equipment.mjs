@@ -58,13 +58,13 @@ export class BaseEquipment extends BaseItem {
 
 			traits: new SetField(
 				new StringField({
-					choices: this.constructor.traitOptions
+					choices: Object.keys(this.traitOptions),
 				}),
 				{
 					required: true,
 					initial: [],
-				}
-			)
+				},
+			),
 		};
 	}
 
@@ -141,6 +141,8 @@ export class BaseEquipment extends BaseItem {
 		const determined_prefix = prefix.length > 0 ? prefix : "item";
 		const discriminators = super.getDiscriminators(determined_prefix);
 
-		return discriminators.concat(this.traits.map((trait) => `${determined_prefix}.trait.${trait}`));
+		return discriminators.concat(
+			this.traits.map((trait) => `${determined_prefix}.trait.${trait}`),
+		);
 	}
 }

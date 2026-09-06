@@ -171,8 +171,6 @@ export class Weapon extends BaseEquipment {
 		}
 
 		for (const trait of this.traits) {
-			console.log(trait);
-			console.log(WARDEN.WEAPON_TRAITS[trait]);
 			if (WARDEN.WEAPON_TRAITS[trait] && WARDEN.WEAPON_TRAITS[trait].preresolve_cb)
 				WARDEN.WEAPON_TRAITS[trait].preresolve_cb(this, resolving_details)
 		}

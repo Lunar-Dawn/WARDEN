@@ -1,5 +1,3 @@
-import { getBaseActiveEffect } from "../dynamic_effects/activeEffectFactory.mjs";
-
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheet } = foundry.applications.sheets;
 

@@ -99,9 +99,6 @@ export class BaseCharacterData extends TypeDataModel {
 	prepareDynamicEffects() {
 		/** @type {DynamicEffect[]} */
 		this.dynamic_effects = [];
-
-		// I don't like this, but without a fake field it coerces all values to strings
-		this.dynamic_effect_field_type = new ArrayField(new AnyField());
 	}
 	prepareDerivedData() {
 		super.prepareDerivedData();
@@ -235,17 +232,6 @@ export class BaseCharacterData extends TypeDataModel {
 		};
 	}
 
-	getFieldForProperty(key) {
-		if (
-			(typeof key === "string" && key.startsWith("dynamic_effects.")) ||
-			(Array.isArray(key) && key[0] === "dynamic_effect")
-		) {
-			return this.dynamic_effect_field_type;
-		} else {
-			return super.getFieldForProperty(key);
-		}
-	}
-
 	/**
 	 * Returns a list of domains that describe the current status of the character.
 	 *
@@ -295,7 +281,9 @@ export class BaseCharacterData extends TypeDataModel {
 			if (e.domains === undefined) {
 				return false;
 			}
-			const effect_domains = Array.isArray(e.domains) ? new Set(e.domains) : e.domains;
+			const effect_domains = Array.isArray(e.domains)
+				? new Set(e.domains)
+				: e.domains;
 			return !effect_domains.isDisjointFrom(domain_set);
 		});
 

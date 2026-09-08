@@ -233,6 +233,7 @@ export class Weapon extends BaseEquipment {
 				title,
 				against,
 				target,
+				origin: this.parent.actor.system
 			},
 			{ skip },
 		);
@@ -310,6 +311,8 @@ export class Weapon extends BaseEquipment {
 				die_size: this.damage_die,
 				potency: 1,
 				modifier: 0,
+				target,
+				origin: this.parent.actor.system
 			},
 			{ skip },
 		);

@@ -68,6 +68,10 @@ class EffectManager extends CommonManager {
 			modifiers: transformEffectsForDisplay(
 				this.resolver.appliedEffects,
 				this.resolver,
+				{
+					self: this.parameters.origin,
+					target: this.parameters.target
+				}
 			),
 		});
 

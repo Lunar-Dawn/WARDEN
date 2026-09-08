@@ -69,6 +69,10 @@ export class EffectWindow extends HandlebarsApplicationMixin(ApplicationV2) {
 		context.modifiers = transformEffectsForDisplay(
 			this.manager.resolver.applicableEffects,
 			this.manager.resolver,
+			{
+				self: this.manager.parameters.origin,
+				target: this.manager.parameters.target
+			}
 		);
 
 		return context;

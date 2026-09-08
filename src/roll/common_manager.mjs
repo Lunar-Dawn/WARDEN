@@ -105,7 +105,7 @@ const modifierSort = (a, b) => {
 		a.index - b.index
 	);
 };
-export const transformEffectsForDisplay = (effects, resolver) => {
+export const transformEffectsForDisplay = (effects, resolver, extra_options = {}) => {
 	const annotatedBonuses = effects
 		.map((e, i) => [e, i])
 		.filter(([e, _]) => e.type === "bonus")
@@ -115,7 +115,7 @@ export const transformEffectsForDisplay = (effects, resolver) => {
 			modifier_type: e.modifier_type,
 			dir: 1,
 			label: e.label ?? "",
-			value: resolver.parseValue(e.value),
+			value: resolver.parseValue(e.value, extra_options),
 			enabled: e.enabled,
 		}));
 	const annotatedPenalties = effects
@@ -127,7 +127,7 @@ export const transformEffectsForDisplay = (effects, resolver) => {
 			modifier_type: e.modifier_type,
 			dir: -1,
 			label: e.label ?? "",
-			value: -resolver.parseValue(e.value),
+			value: -resolver.parseValue(e.value, extra_options),
 			enabled: e.enabled,
 		}));
 
@@ -140,7 +140,7 @@ export const transformEffectsForDisplay = (effects, resolver) => {
 			modifier_type: "universal",
 			dir: 1,
 			label: e.label ?? "",
-			value: resolver.parseValue(e.value),
+			value: resolver.parseValue(e.value, extra_options),
 			postfix: "d",
 			pretty_type: "effect_dice",
 			enabled: e.enabled,
@@ -154,7 +154,7 @@ export const transformEffectsForDisplay = (effects, resolver) => {
 			modifier_type: "universal",
 			dir: 1,
 			label: e.label ?? "",
-			value: resolver.parseValue(e.value),
+			value: resolver.parseValue(e.value, extra_options),
 			prefix: "d",
 			pretty_type: "effect_die_size",
 			enabled: e.enabled,
@@ -168,7 +168,7 @@ export const transformEffectsForDisplay = (effects, resolver) => {
 			modifier_type: "universal",
 			dir: 1,
 			label: e.label ?? "",
-			value: resolver.parseValue(e.value),
+			value: resolver.parseValue(e.value, extra_options),
 			prefix: "P",
 			pretty_type: "effect_potency",
 			enabled: e.enabled,
@@ -182,7 +182,7 @@ export const transformEffectsForDisplay = (effects, resolver) => {
 			modifier_type: "universal",
 			dir: 1,
 			label: e.label ?? "",
-			value: resolver.parseValue(e.value),
+			value: resolver.parseValue(e.value, extra_options),
 			pretty_type: "effect_damage_type",
 			enabled: e.enabled,
 		}));

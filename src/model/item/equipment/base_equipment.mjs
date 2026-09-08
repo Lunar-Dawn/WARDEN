@@ -141,8 +141,14 @@ export class BaseEquipment extends BaseItem {
 		const determined_prefix = prefix.length > 0 ? prefix : "item";
 		const discriminators = super.getDiscriminators(determined_prefix);
 
-		return discriminators.concat(
-			this.traits.map((trait) => `${determined_prefix}.trait.${trait}`),
-		);
+		const trait_discriminators = this.traits.map((trait) => `${determined_prefix}.trait.${trait}`);
+		
+		// As traits are a Set, the mapping will get back a set as well. If you just drop it in as is, it'll
+		// result in the final discrim list being an array of strings, then randomly a set of an array of strings for
+		// the traits.
+		// So you gotta gets its values, then make an array outta those, *then* merge 'em.
+		const final_discriminators = [...discriminators, ...Array.from(trait_discriminators.values())];
+
+		return final_discriminators;
 	}
 }

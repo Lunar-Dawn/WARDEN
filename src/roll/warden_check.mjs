@@ -5,6 +5,7 @@ export class WardenCheck extends Roll {
 		this.difficulty = options.difficulty;
 		this.target_defence = options.target_defence;
 		this.modifiers = options.modifiers;
+		this.notes = options.notes;
 	}
 
 	/**
@@ -98,6 +99,7 @@ export class WardenCheck extends Roll {
 			difficulty_dv: this.difficulty,
 			statistic: this.target_defence.name.length > 0 ? game.i18n.localize("warden.roll.vs_statistic", {statistic: this.target_defence.name.capitalize()}) : ""
 		};
+		context.notes = this.notes;
 
 		return context;
 	}

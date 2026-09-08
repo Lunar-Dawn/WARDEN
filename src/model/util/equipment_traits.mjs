@@ -75,5 +75,55 @@ export const WEAPON_TRAITS = {
                 value: 2,
             }
         ]
+    },
+    blast: {
+        label: "warden.traits.weapon.blast.label",
+        desc: "warden.traits.weapon.blast.desc",
+        dynamic_effects: [
+            {
+                type: "note",
+                label: "Blast",
+                domains: new Set(["attack", "strike.attack"]),
+                defaultEnabled: true,
+                applicable_if: ["attack.trait.blast"],
+
+                modifier_type: "universal",
+
+                mode: "add",
+                value: "<p><strong>Blast</strong> Whenever you hit a target with a <strong>Strike</strong>, the characters adjacent to the target take half the damage dealt to the main target.</p>", // TODO: figure out multiple things, one, how to localise this, and also how to cleanly insert the trait title in there.
+            }
+        ]
+    },
+    breach: {
+        label: "warden.traits.weapon.breach.label",
+        desc: "warden.traits.weapon.breach.desc",
+        dynamic_effects: [
+            {
+                type: "note",
+                label: "Breach",
+                domains: new Set(["damage", "strike.damage"]),
+                defaultEnabled: true,
+                applicable_if: ["damage.trait.breach"],
+
+                modifier_type: "universal",
+
+                mode: "add",
+                value: "<p><strong>Breach</strong> The weapon ignores half of the <strong>Armor</strong> the target has, rounded down.</p>",
+            }
+        ]
     }
 }
+
+/**
+ * {
+    "label": "Noter Ability",
+    "type": "note",
+    "modifier_type": "universal",
+    "mode": "add",
+    "domains": [
+        "strike.melee"
+    ],
+    "value": "<p><strong>Noter</strong> This is cool!</p>",
+    "enabled": false
+}
+ */

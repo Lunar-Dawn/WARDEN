@@ -1,5 +1,5 @@
 /**
- * @typedef {"proficiency_rank" | "bonus" | "penalty" | "effect_dice" | "effect_die_size" | "effect_potency" | "effect_damage_type" | "benefit" | "detriment"} DynamicEffectType
+ * @typedef {"proficiency_rank" | "bonus" | "penalty" | "effect_dice" | "effect_die_size" | "effect_potency" | "effect_damage_type" | "note" | "benefit" | "detriment"} DynamicEffectType
  */
 
 /** TODO: Priority?
@@ -86,6 +86,8 @@ export class DynamicResultResolver {
 		this.#resolveType("effect_potency");
 		this.#resolveType("effect_damage_type");
 
+		this.#resolveType("note");
+
 		this.#resolveType("benefit");
 		this.#resolveType("detriment");
 
@@ -109,6 +111,7 @@ export class DynamicResultResolver {
 				effect_die_size: this.#resolveType("effect_die_size"),
 				effect_potency: this.#resolveType("effect_potency"),
 				effect_damage_type: this.#resolveType("effect_damage_type"),
+				// Note is skipped, not much to reference in HTML snippets.
 				benefit: this.#resolveType("benefit"),
 				detriment: this.#resolveType("detriment"),
 				...extra_data,
@@ -142,6 +145,7 @@ export class DynamicResultResolver {
 					circumstance: 0,
 				};
 			case "effect_damage_type":
+			case "note":
 				return "";
 			default:
 				return 0;

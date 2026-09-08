@@ -283,6 +283,7 @@ export class Weapon extends BaseEquipment {
 
 		[
 			...extra_domains,
+			...this.getDomains("damage"),
 			...this.parent.actor.system.getDomains(),
 			...(!!target ? target.getDomains("target") : []),
 		].forEach((extra_domain) => {
@@ -290,6 +291,7 @@ export class Weapon extends BaseEquipment {
 		});
 		[
 			...extra_discriminators,
+			...this.getDiscriminators("damage"),
 			...this.parent.actor.system.getDiscriminators(),
 			...(!!target ? target.getDiscriminators("target") : []),
 		].forEach((extra_discriminator) => {

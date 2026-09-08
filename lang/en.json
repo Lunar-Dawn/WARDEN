@@ -378,7 +378,9 @@
 			"effect_dice": "Dice",
 			"effect_die_size": "Die Size",
 			"effect_potency": "Potency",
-			"effect_damage_type": "Damage Type"
+			"effect_damage_type": "Damage Type",
+
+			"note": "Note"
 		},
 		"modifier_type_abbr": {
 			"universal": "UNIV",
@@ -390,7 +392,9 @@
 			"effect_dice": "Dice",
 			"effect_die_size": "DieSize",
 			"effect_potency": "Potency",
-			"effect_damage_type": "DmgType"
+			"effect_damage_type": "DmgType",
+
+			"note": "Note"
 		},
 
 		"check_label": "{type} Check",
@@ -491,6 +495,14 @@
 				"agile": {
 					"label": "Agile",
 					"desc": "<p>Cannot be applied to Heavy or Huge weapons. You gain a <strong>+2 Universal Bonus</strong> to <strong>Attacks</strong> that have <strong>Multiple Attack Penalty.</strong></p>"
+				},
+				"blast": {
+					"label": "Blast",
+					"desc": "<p>Whenever you hit a target with a <strong>Strike</strong>, the characters adjacent to the target take half the damage dealt to the main target.</p>"
+				},
+				"breach": {
+					"label": "Breach",
+					"desc": "<p>The weapon ignores half of the <strong>Armor</strong> the target has, rounded down.</p>"
 				}
 			}
 		}

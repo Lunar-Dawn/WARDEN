@@ -76,6 +76,7 @@ class EffectManager extends CommonManager {
 		});
 
 		await this.roll.evaluate();
+		Object.assign(this.roll.options, {notes: this.resolver.calcNonTypeSums("note")});
 
 		await this.roll.toMessage({
 			speaker: this.speaker,

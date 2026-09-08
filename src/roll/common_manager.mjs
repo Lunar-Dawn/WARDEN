@@ -86,6 +86,7 @@ const PATH_ORDER = {
 	effect_damage_type: 3,
 	bonus: 4,
 	penalty: 5,
+	note: 6,
 };
 
 const TYPES_ORDER = {
@@ -186,6 +187,19 @@ export const transformEffectsForDisplay = (effects, resolver, extra_options = {}
 			pretty_type: "effect_damage_type",
 			enabled: e.enabled,
 		}));
+	const annotatedNotes = effects
+		.map((e, i) => [e, i])
+		.filter(([e, _]) => e.type === "note")
+		.map(([e, i]) => ({
+			path: "note",
+			index: i,
+			modifier_type: "universal",
+			dir: 1,
+			label: e.label ?? "",
+			value: resolver.parseValue(e.value, extra_options),
+			pretty_type: "note",
+			enabled: e.enabled,
+		}));
 
 	const modifiers = [
 		...annotatedBonuses,
@@ -194,6 +208,7 @@ export const transformEffectsForDisplay = (effects, resolver, extra_options = {}
 		...annotatedDieSize,
 		...annotatedPotency,
 		...annotatedDamageType,
+		...annotatedNotes
 	];
 
 	modifiers.sort(modifierSort);

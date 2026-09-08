@@ -28,10 +28,7 @@
 
 			{{#each modifiers}}
 				<span class="modifier">
-					{{~numberFormat
-						value
-						sign=true
-					~}}:{{#if label.length}}
+					{{~warden-prettify-modifier value prefix postfix ~}}:{{#if label.length}}
 						{{ label }}
 					{{else}}
 						{{localize (concat "warden.roll.unnamed_modifier." modifier_type)}}
@@ -40,6 +37,9 @@
 			{{/each}}
 		</div>
 	{{/if}}
+	<div class="notes">
+		{{{ notes }}}
+	</div>
 	<div class="dice-result">
 		<div class="dice-formula">{{ formula }}</div>
 		{{{ tooltip }}}

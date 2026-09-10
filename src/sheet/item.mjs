@@ -41,6 +41,9 @@ export class WARDENItemSheet extends HandlebarsApplicationMixin(ItemSheet) {
 		form: {
 			submitOnChange: true,
 		},
+		position: {
+			height: 500,
+		}
 	};
 
 	async _prepareContext(options) {

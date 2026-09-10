@@ -111,5 +111,88 @@ export const WEAPON_TRAITS = {
                 value: "<p><strong>@Localise[warden.traits.weapon.breach.label]</strong> @Localise[warden.traits.weapon.breach.desc]</p>",
             }
         ]
+    },
+    break: {
+        label: "warden.traits.weapon.break.label",
+        desc: "warden.traits.weapon.break.desc",
+        dynamic_effects: [], // TODO: Will need implementation if we ever manually implement the various actions.
+    },
+    concealable: {
+        label: "warden.traits.weapon.concealable.label",
+        desc: "warden.traits.weapon.concealable.desc",
+        dynamic_effects: [], // TODO: Will need implementation if we ever manually implement the various actions.
+    },
+    disperse: {
+        label: "warden.traits.weapon.disperse.label",
+        desc: "warden.traits.weapon.disperse.desc",
+        dynamic_effects: [],
+    },
+    dual: {
+        label: "warden.traits.weapon.dual.label",
+        desc: "warden.traits.weapon.dual.desc",
+        dynamic_effects: [], // TODO: I have no idea how we'll handle this.
+    },
+    explosive_1: {
+        label: "warden.traits.weapon.explosive.label_1",
+        desc: "warden.traits.weapon.explosive.desc",
+        validity_cb: (item) => {
+            return !(item.traits.has("explosive_2") || item.traits.has("explosive_3"));
+        },
+        dynamic_effects: [],
+    },
+    explosive_2: {
+        label: "warden.traits.weapon.explosive.label_2",
+        desc: "warden.traits.weapon.explosive.desc",
+        validity_cb: (item) => {
+            return !(item.traits.has("explosive_1") || item.traits.has("explosive_3"));
+        },
+        dynamic_effects: [],
+    },
+    explosive_3: {
+        label: "warden.traits.weapon.explosive.label_3",
+        desc: "warden.traits.weapon.explosive.desc",
+        validity_cb: (item) => {
+            return !(item.traits.has("explosive_1") || item.traits.has("explosive_2"));
+        },
+        dynamic_effects: [],
+    },
+    fatal: {
+        label: "warden.traits.weapon.fatal.label",
+        desc: "warden.traits.weapon.fatal.desc",
+        validity_cb: (item) => {
+            return item.damage_die <= 8;
+        },
+        dynamic_effects: [
+            {
+                type: "effect_die_size",
+                label: "Fatal",
+                domains: new Set(["damage", "strike.damage"]),
+                defaultEnabled: true,
+                applicable_if: ["damage.trait.fatal", "crit"],
+
+                modifier_type: "universal",
+
+                mode: "add",
+                value: 4,
+            }
+        ],
+    },
+    forceful: {
+        label: "warden.traits.weapon.forceful.label",
+        desc: "warden.traits.weapon.forceful.desc",
+        dynamic_effects: [
+            {
+                type: "bonus",
+                label: "Forceful",
+                domains: new Set(["damage", "strike.damage"]),
+                defaultEnabled: true,
+                applicable_if: ["damage.trait.forceful", "map"],
+
+                modifier_type: "item",
+
+                mode: "add",
+                value: 2,
+            }
+        ],
     }
 }

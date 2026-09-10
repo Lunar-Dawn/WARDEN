@@ -503,6 +503,36 @@
 				"breach": {
 					"label": "Breach",
 					"desc": "The weapon ignores half of the <strong>Armor</strong> the target has, rounded down."
+				},
+				"break": {
+					"label": "Break",
+					"desc": "You can use the <strong>Break</strong> action with the weapon. It uses your <strong>Combat Proficiency</strong>."
+				},
+				"concealable": {
+					"label": "Concealable",
+					"desc": "You gain a <strong>+4 Item Bonus</strong> to hiding the weapon with <strong>Sleight of Hand</strong>."
+				},
+				"disperse": {
+					"label": "Disperse",
+					"desc": "Only applied to <strong>Ranged Weapons</strong>. The weapon can't be used outside of its first <strong>Range Increment</strong>."
+				},
+				"dual": {
+					"label": "Dual",
+					"desc": "Combined <strong>Melee</strong> and <strong>Ranged</strong> weapon. Choose one as the primary weapon, and the other weapon must have a <strong>Rarity</strong> equal to half or less of the primary weapon."
+				},
+				"explosive": {
+					"label_1": "Explosive 1m",
+					"label_2": "Explosive 2m",
+					"label_3": "Explosive 3m",
+					"desc": "Explosive weapons have a second range: their <strong>Explosion</strong> increment. When an <strong>Explosive Weapon</strong> is used to make a <strong>Strike</strong>, it causes an <strong>Explosion</strong>. To target a space, you must make a <strong>Difficult (15) Check.</strong><ul><li><strong>Success:</strong> You hit the target or space. <ul><li><strong>Critical:</strong> As <strong>Success</strong>, but you also gain a <strong>Critical Effect</strong> against the <strong>Target</strong>.</li></ul></li><li><strong>Failure:</strong> You miss the target by up to 5m (GW's choice where it lands), and everyone gains <strong>Cover</strong> against the <strong>Explosion</strong>.<ul><li><strong>Critical:</strong> The <strong>Explosive</strong> is also a dud that deals no damage.</li></ul></li></ul>"
+				},
+				"fatal": {
+					"label": "Fatal",
+					"desc": "Only applied to to weapons with <strong>d8</strong> or smaller <strong>Damage Die</strong>. When you <strong>Critically Succeed</strong> and deal damage with the weapon, upgrade its <strong>Damage Dice</strong> by two steps. (<strong>d4 > d6 > d8 > d10 > d12</strong>)"
+				},
+				"forceful": {
+					"label": "Forceful",
+					"desc": "You gain a <strong>+2 Item Bonus</strong> to <strong>Damage</strong> in <strong>Strikes</strong> that have <strong>Multiple Attack Penalty</strong>."
 				}
 			}
 		}

@@ -1,6 +1,6 @@
 import { BaseItem } from "../base_item.mjs";
 
-const { NumberField, StringField, HTMLField } = foundry.data.fields;
+const { NumberField, StringField, HTMLField, SetField } = foundry.data.fields;
 
 /**
  * @typedef {"light"|"normal"|"heavy"|"huge"} Weight
@@ -55,7 +55,21 @@ export class BaseEquipment extends BaseItem {
 			description: new HTMLField({
 				required: true,
 			}),
+
+			traits: new SetField(
+				new StringField({
+					choices: Object.keys(this.traitOptions),
+				}),
+				{
+					required: true,
+					initial: [],
+				},
+			),
 		};
+	}
+
+	static get traitOptions() {
+		return {};
 	}
 
 	/**
@@ -121,5 +135,20 @@ export class BaseEquipment extends BaseItem {
 
 	get supportedTabs() {
 		return ["description", "properties", "traits", "effects"];
+	}
+
+	getDiscriminators(prefix = "") {
+		const determined_prefix = prefix.length > 0 ? prefix : "item";
+		const discriminators = super.getDiscriminators(determined_prefix);
+
+		const trait_discriminators = this.traits.map((trait) => `${determined_prefix}.trait.${trait}`);
+		
+		// As traits are a Set, the mapping will get back a set as well. If you just drop it in as is, it'll
+		// result in the final discrim list being an array of strings, then randomly a set of an array of strings for
+		// the traits.
+		// So you gotta gets its values, then make an array outta those, *then* merge 'em.
+		const final_discriminators = [...discriminators, ...Array.from(trait_discriminators.values())];
+
+		return final_discriminators;
 	}
 }

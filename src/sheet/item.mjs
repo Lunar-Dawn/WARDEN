@@ -81,6 +81,7 @@ export class WARDENItemSheet extends HandlebarsApplicationMixin(ItemSheet) {
 				context.description =
 					await foundry.applications.ux.TextEditor.implementation.enrichHTML(
 						this.item.system.description,
+						{actor: this.item.actor, item: this.item}
 					);
 				break;
 			case "effects":

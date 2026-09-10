@@ -179,6 +179,10 @@ class CheckManager extends CommonManager {
 			modifiers: transformEffectsForDisplay(
 				this.resolver.appliedEffects,
 				this.resolver,
+				{
+					self: this.parameters.origin,
+					target: this.parameters.target
+				}
 			),
 		});
 
@@ -187,6 +191,9 @@ class CheckManager extends CommonManager {
 		if (!this.isOpen) {
 			Object.assign(this.roll.options, this.calculateResult());
 		}
+
+		const notes = await foundry.applications.ux.TextEditor.enrichHTML(this.resolver.calcNonTypeSums("note"), {});
+		Object.assign(this.roll.options, {notes});
 
 		await this.roll.toMessage({
 			speaker: this.speaker,

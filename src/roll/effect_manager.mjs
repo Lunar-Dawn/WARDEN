@@ -68,10 +68,17 @@ class EffectManager extends CommonManager {
 			modifiers: transformEffectsForDisplay(
 				this.resolver.appliedEffects,
 				this.resolver,
+				{
+					self: this.parameters.origin,
+					target: this.parameters.target
+				}
 			),
 		});
 
 		await this.roll.evaluate();
+		
+		const notes = await foundry.applications.ux.TextEditor.enrichHTML(this.resolver.calcNonTypeSums("note"), {});
+		Object.assign(this.roll.options, {notes});
 
 		await this.roll.toMessage({
 			speaker: this.speaker,

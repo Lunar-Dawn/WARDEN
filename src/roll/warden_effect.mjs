@@ -3,12 +3,14 @@ export class WardenEffect extends Roll {
 		super(formula, data, options);
 
 		this.modifiers = options.modifiers;
+		this.notes = options.notes;
 	}
 
 	async _prepareChatRenderContext(options) {
 		const context = await super._prepareChatRenderContext(options);
 
 		context.modifiers = this.modifiers;
+		context.notes = this.notes;
 
 		return context;
 	}

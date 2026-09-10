@@ -191,7 +191,9 @@ class CheckManager extends CommonManager {
 		if (!this.isOpen) {
 			Object.assign(this.roll.options, this.calculateResult());
 		}
-		Object.assign(this.roll.options, {notes: this.resolver.calcNonTypeSums("note")});
+
+		const notes = await foundry.applications.ux.TextEditor.enrichHTML(this.resolver.calcNonTypeSums("note"), {});
+		Object.assign(this.roll.options, {notes});
 
 		await this.roll.toMessage({
 			speaker: this.speaker,

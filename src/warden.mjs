@@ -25,6 +25,7 @@ import { EquipmentSheet } from "./sheet/equipment.mjs";
 import { ConditionSheet } from "./sheet/condition.mjs";
 import { OpponentSheet } from "./sheet/opponent.mjs";
 import { WEAPON_TRAITS } from "./model/util/equipment_traits.mjs";
+import { enrichTextEditor } from "./html.mjs";
 
 globalThis["WARDEN"] = {};
 globalThis["WARDEN"].DAMAGE_TYPES = DAMAGE_TYPES;
@@ -99,6 +100,11 @@ Hooks.once("init", () => {
 		types: ["condition"],
 		makeDefault: true,
 		label: "warden.condition.sheet.label",
+	});
+
+	CONFIG.TextEditor.enrichers.push({
+		pattern: /@(Localize|Localise)\[([^\]]+)\](?:{([^}]+)})?/g,
+		enricher: (match, options) => enrichTextEditor(match, options),
 	});
 
 	registerHelpers();

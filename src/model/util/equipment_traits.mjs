@@ -90,7 +90,7 @@ export const WEAPON_TRAITS = {
                 modifier_type: "universal",
 
                 mode: "add",
-                value: "<p><strong>Blast</strong> Whenever you hit a target with a <strong>Strike</strong>, the characters adjacent to the target take half the damage dealt to the main target.</p>", // TODO: figure out multiple things, one, how to localise this, and also how to cleanly insert the trait title in there.
+                value: "<p><strong>@Localise[warden.traits.weapon.blast.label]</strong> @Localise[warden.traits.weapon.blast.desc]</p>",
             }
         ]
     },
@@ -108,22 +108,8 @@ export const WEAPON_TRAITS = {
                 modifier_type: "universal",
 
                 mode: "add",
-                value: "<p><strong>Breach</strong> The weapon ignores half of the <strong>Armor</strong> the target has, rounded down.</p>",
+                value: "<p><strong>@Localise[warden.traits.weapon.breach.label]</strong> @Localise[warden.traits.weapon.breach.desc]</p>",
             }
         ]
     }
 }
-
-/**
- * {
-    "label": "Noter Ability",
-    "type": "note",
-    "modifier_type": "universal",
-    "mode": "add",
-    "domains": [
-        "strike.melee"
-    ],
-    "value": "<p><strong>Noter</strong> This is cool!</p>",
-    "enabled": false
-}
- */

@@ -104,6 +104,7 @@ export class CharacterSheet extends BaseCharacterSheet {
 				description:
 					await foundry.applications.ux.TextEditor.implementation.enrichHTML(
 						a.system.description,
+						{actor: this.actor, item: a}
 					),
 				expanded: this.expandedDescriptions.has(a.id),
 				feats: await Promise.all(

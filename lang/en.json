@@ -486,23 +486,23 @@
 			"weapon": {
 				"activated": {
 					"label": "Activated",
-					"desc": "<p>Drawing the weapon requires an additional <strong>Interact</strong> action to activate it.</p>"
+					"desc": "Drawing the weapon requires an additional <strong>Interact</strong> action to activate it."
 				},
 				"advanced": {
 					"label": "Advanced",
-					"desc": "<p>You must be at least <strong>Adept (+3)</strong> in <strong>Combat</strong> to use the weapon proficiently.</p>"
+					"desc": "You must be at least <strong>Adept (+3)</strong> in <strong>Combat</strong> to use the weapon proficiently."
 				},
 				"agile": {
 					"label": "Agile",
-					"desc": "<p>Cannot be applied to Heavy or Huge weapons. You gain a <strong>+2 Universal Bonus</strong> to <strong>Attacks</strong> that have <strong>Multiple Attack Penalty.</strong></p>"
+					"desc": "Cannot be applied to Heavy or Huge weapons. You gain a <strong>+2 Universal Bonus</strong> to <strong>Attacks</strong> that have <strong>Multiple Attack Penalty.</strong>"
 				},
 				"blast": {
 					"label": "Blast",
-					"desc": "<p>Whenever you hit a target with a <strong>Strike</strong>, the characters adjacent to the target take half the damage dealt to the main target.</p>"
+					"desc": "Whenever you hit a target with a <strong>Strike</strong>, the characters adjacent to the target take half the damage dealt to the main target."
 				},
 				"breach": {
 					"label": "Breach",
-					"desc": "<p>The weapon ignores half of the <strong>Armor</strong> the target has, rounded down.</p>"
+					"desc": "The weapon ignores half of the <strong>Armor</strong> the target has, rounded down."
 				}
 			}
 		}

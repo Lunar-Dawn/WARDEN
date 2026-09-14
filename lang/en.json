@@ -533,6 +533,32 @@
 				"forceful": {
 					"label": "Forceful",
 					"desc": "You gain a <strong>+2 Item Bonus</strong> to <strong>Damage</strong> in <strong>Strikes</strong> that have <strong>Multiple Attack Penalty</strong>."
+				},
+				"grapple": {
+					"label": "Grapple",
+					"desc": "You can use the <strong>Grapple</strong> action with the weapon. It uses your <strong>Combat Proficiency</strong>."
+				},
+				"improvised": {
+					"label": "Improvised",
+					"desc": "The weapon is not a real weapon, but a part of the environment or a tool. You have a <strong>-2 Universal Penalty</strong> when using the weapon for <strong>Strikes</strong>."
+				},
+				"loud": {
+					"label": "Loud",
+					"desc": "This weapon cannot be used stealthily, as it creates a loud noise or bright lights. Whenever used or activated, characters within 50 meters automatically detect it."
+				},
+				"magazine": {
+					"label_1": "Magazine 1",
+					"label_2": "Magazine 2",
+					"label_3": "Magazine 3",
+					"desc": "Only applied to <strong>Ranged Weapons</strong>. The weapon has a limited amount of ammunition before it must be <strong>Reloaded</strong>. You gain a number of <strong>Ammo</strong>. Your <strong>Ammo</strong> is not lowered when you make <strong>Strikes</strong>, and you do not need to track ammo separately.<ul><li><strong>1: Ammo Count 1, Reload 1</strong></li><li><strong>2: Ammo Count 2, Reload 2</strong></li><li><strong>3: Ammo Count 3, Reload 3</strong></li></ul>Every time you <strong>Critically Fail</strong> a <strong>Check</strong> with the weapon, you lower your <strong>Ammo</strong> by <strong>1</strong>. When your <strong>Ammo</strong> hits <strong>0</strong>, the weapon becomes <strong>Discharged</strong> (see <strong>Reload</strong>). When <strong>Discharged</strong> ends, it resets the weapon's <strong>Ammo</strong> to the <strong>Ammo Count</strong>."
+				},
+				"manual": {
+					"label": "Manual",
+					"desc": "Only applied to weapons with <strong>Magazine</strong>. The weapon's ammunition is reloaded one by one, increasing the amount of actions required to <strong>Reload</strong> it by <strong>1</strong>."
+				},
+				"massive": {
+					"label": "Massive",
+					"desc": "Only applied to <strong>Heavy</strong> or <strong>Huge</strong> weapons. When you <strong>Raise a Weapon</strong>, you add two <strong>Damage Dice</strong> to the next <strong>Strike</strong> you make with it."
 				}
 			}
 		}

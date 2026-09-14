@@ -35,6 +35,25 @@
  */
 
 /**
+ * Looks through a set of traits, and finds traits that indicate that they're part of the family of traits a given trait is,
+ * but *isn't* the given trait themselves. As an example, if you have a given trait of `magazine_1`, you could use this to look for
+ * the existence of `magazine_2` in the trait set, ignoring `magazine_1` itself.
+ * Can also be used to look for traits without having a given trait -- for example, to look for any `magazine_` traits.
+ * 
+ * @param {Set<string>} traits The set of traits to look through.
+ * @param {string} trait_start The common front part of the trait names, going with the above example, it could be 'magazine_'.
+ * @param {string} trait_end The given trait's end part. In the above example, this would be `1`. Can be left empty if we don't
+ * @returns True if the a trait could be found that starts similarly to our given trait, but *isn't* our given trait 
+ *          (as written above, an example case would be if we found `magazine_2`).
+ */
+function findSimilarTraits(traits, trait_start, trait_end) {
+    for (const trait of traits)
+        if (trait.startsWith(trait_start) && (trait_end === undefined || trait.length == 0 || trait !== `${trait_start}${trait_end}`))
+            return true;
+    return false;
+}
+
+/**
  * @type Object.<string, WeaponTraitType>
  */
 export const WEAPON_TRAITS = {
@@ -136,7 +155,7 @@ export const WEAPON_TRAITS = {
         label: "warden.traits.weapon.explosive.label_1",
         desc: "warden.traits.weapon.explosive.desc",
         validity_cb: (item) => {
-            return !(item.traits.has("explosive_2") || item.traits.has("explosive_3"));
+            return !findSimilarTraits(item.traits, "explosive_", "1");
         },
         dynamic_effects: [],
     },
@@ -144,7 +163,7 @@ export const WEAPON_TRAITS = {
         label: "warden.traits.weapon.explosive.label_2",
         desc: "warden.traits.weapon.explosive.desc",
         validity_cb: (item) => {
-            return !(item.traits.has("explosive_1") || item.traits.has("explosive_3"));
+            return !findSimilarTraits(item.traits, "explosive_", "2");
         },
         dynamic_effects: [],
     },
@@ -152,7 +171,7 @@ export const WEAPON_TRAITS = {
         label: "warden.traits.weapon.explosive.label_3",
         desc: "warden.traits.weapon.explosive.desc",
         validity_cb: (item) => {
-            return !(item.traits.has("explosive_1") || item.traits.has("explosive_2"));
+            return !findSimilarTraits(item.traits, "explosive_", "1");
         },
         dynamic_effects: [],
     },
@@ -189,6 +208,100 @@ export const WEAPON_TRAITS = {
                 applicable_if: ["damage.trait.forceful", "map"],
 
                 modifier_type: "item",
+
+                mode: "add",
+                value: 2,
+            }
+        ],
+    },
+    grapple: {
+        label: "warden.traits.weapon.grapple.label",
+        desc: "warden.traits.weapon.grapple.desc",
+        dynamic_effects: [], // TODO: Will need implementation if we ever manually implement the various actions.
+    },
+    improvised: {
+        label: "warden.traits.weapon.improvised.label",
+        desc: "warden.traits.weapon.improvised.desc",
+        dynamic_effects: [
+            {
+                type: "penalty",
+                label: "Improvised",
+                domains: new Set(["attack", "strike.attack"]),
+                defaultEnabled: true,
+                applicable_if: ["damage.trait.improvised", {"not": "ignore_improvised_penalty"}],
+
+                modifier_type: "universal",
+
+                mode: "add",
+                value: 2,
+            }
+        ]
+    },
+    loud: {
+        label: "warden.traits.weapon.loud.label",
+        desc: "warden.traits.weapon.loud.desc",
+        dynamic_effects: [
+            {
+                type: "note",
+                label: "Loud",
+                domains: new Set(["attack", "strike.attack"]),
+                defaultEnabled: true,
+                applicable_if: ["attack.trait.loud"],
+
+                modifier_type: "universal",
+
+                mode: "add",
+                value: "<p><strong>@Localise[warden.traits.weapon.loud.label]</strong> @Localise[warden.traits.weapon.loud.desc]</p>",
+            }
+        ],
+    },
+    magazine_1: {
+        label: "warden.traits.weapon.magazine.label_1",
+        desc: "warden.traits.weapon.magazine.desc",
+        validity_cb: (item) => {
+            return item.type === "ranged" && !findSimilarTraits(item.traits, "magazine_", "1");
+        },
+        dynamic_effects: [], // TODO: Might need a completely unique implementation.
+    },
+    magazine_2: {
+        label: "warden.traits.weapon.magazine.label_2",
+        desc: "warden.traits.weapon.magazine.desc",
+        validity_cb: (item) => {
+            return item.type === "ranged" && !findSimilarTraits(item.traits, "magazine_", "2");
+        },
+        dynamic_effects: [], // TODO: Might need a completely unique implementation.
+    },
+    magazine_3: {
+        label: "warden.traits.weapon.magazine.label_3",
+        desc: "warden.traits.weapon.magazine.desc",
+        validity_cb: (item) => {
+            return item.type === "ranged" && !findSimilarTraits(item.traits, "magazine_", "3");
+        },
+        dynamic_effects: [], // TODO: Might need a completely unique implementation.
+    },
+    manual: {
+        label: "warden.traits.weapon.manual.label",
+        desc: "warden.traits.weapon.manual.desc",
+        validity_cb: (item) => {
+            return findSimilarTraits(item.traits, "magazine_");
+        },
+        dynamic_effects: [], // TODO: See magazine and reload traits, kinda dependent on those.
+    },
+    massive: {
+        label: "warden.traits.weapon.massive.label",
+        desc: "warden.traits.weapon.massive.desc",
+        validity_cb: (item) => {
+            return ["heavy", "huge"].find((x) => x === item.weight) !== undefined;
+        },
+        dynamic_effects: [
+            {
+                type: "effect_dice",
+                label: "Massive (Weapon Raised)",
+                domains: new Set(["damage", "strike.damage"]),
+                defaultEnabled: false, // TODO: reconsider when we implement Raise a Weapon
+                applicable_if: ["damage.trait.massive"], // TODO: reconsider when we implement Raise a Weapon
+
+                modifier_type: "universal",
 
                 mode: "add",
                 value: 2,

@@ -298,8 +298,6 @@ export class Weapon extends BaseEquipment {
 			discriminators.add(extra_discriminator);
 		});
 
-		console.log(domains, discriminators);
-
 		const resolver = this.parent.actor.system.getDynamicResultResolver(
 			domains,
 			discriminators,

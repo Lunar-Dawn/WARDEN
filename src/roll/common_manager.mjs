@@ -63,7 +63,7 @@ export class CommonManager {
 	 * @param {string} index
 	 */
 	toggle(index) {
-		const effect = this.resolver.effects[index];
+		const effect = this.resolver.applicableEffects[index];
 
 		// If we're enabling a non-universal modifier we disable all with the same type and sign first
 		if (!effect.enabled && effect.modifier_type !== "universal") {

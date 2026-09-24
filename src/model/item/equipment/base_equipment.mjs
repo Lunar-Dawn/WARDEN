@@ -72,6 +72,15 @@ export class BaseEquipment extends BaseItem {
 		return {};
 	}
 
+	get fullDescription() {
+		const traitOptions = this.constructor.traitOptions;
+		const traitHTML = Array.from(this.traits).map((trait) => {
+			if (!Object.hasOwn(traitOptions, trait)) return "";
+			return `<h5>${game.i18n.localize(traitOptions[trait].label)}</h5><div>${game.i18n.localize(traitOptions[trait].desc)}</div>`
+		}).join("");
+		return `<div>${this.description}</div>${traitHTML}`
+	}
+
 	/**
 	 * @typedef ParameterInput
 	 * @property {DataField} field

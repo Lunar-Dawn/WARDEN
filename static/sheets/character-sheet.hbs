@@ -247,7 +247,7 @@
 				class="kit equipped equipment-context"
 				data-inventory-area="kit"
 				data-item-id="{{ kit.id }}"
-				data-tooltip-html="{{ kit.system.fullDescription }}"
+				data-tooltip-html="{{ kit.system.description }}"
 			>
 				{{#if kit}}
 					<span>
@@ -273,7 +273,7 @@
 						class="draggable equipped equipment-context"
 						data-inventory-area="equipped"
 						data-item-id="{{ id }}"
-						data-tooltip-html="{{ this.system.fullDescription }}"
+						data-tooltip-html="{{ this.system.description }}"
 					>
 						{{ name }}
 						{{#if this.system.equippedButtons}}
@@ -303,7 +303,7 @@
 						class="draggable equipment-context"
 						data-inventory-area="pockets"
 						data-item-id="{{ id }}"
-						data-tooltip-html="{{ this.system.fullDescription }}"
+						data-tooltip-html="{{ this.system.description }}"
 					>
 						{{ name }}
 					</div>
@@ -319,7 +319,7 @@
 						class="draggable equipment-context"
 						data-inventory-area="pack"
 						data-item-id="{{ id }}"
-						data-tooltip-html="{{ this.system.fullDescription }}"
+						data-tooltip-html="{{ this.system.description }}"
 					>
 						{{ name }}
 					</div>

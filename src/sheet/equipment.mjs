@@ -53,6 +53,9 @@ export class EquipmentSheet extends WARDENItemSheet {
 					})
 				};
 
+				// Selected traits should come first.
+				context.traits = context.traits.sort((a, b) => b.enabled - a.enabled);
+
 				// Ugly-ass hack, but this should make it so variations of the same trait 
 				// only display the description on the last one.
 				context.traits = context.traits.map((trait, i) => ({

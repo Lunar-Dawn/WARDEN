@@ -52,6 +52,14 @@ export class EquipmentSheet extends WARDENItemSheet {
 						enabled: this.item.system.traits.has(trait)
 					})
 				};
+
+				// Ugly-ass hack, but this should make it so variations of the same trait 
+				// only display the description on the last one.
+				context.traits = context.traits.map((trait, i) => ({
+  					...trait,
+  					desc: context.traits[i + 1]?.desc === trait.desc ? "" : trait.desc
+				}));
+
 				break;
 		}
 

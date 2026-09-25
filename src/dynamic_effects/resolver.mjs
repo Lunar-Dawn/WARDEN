@@ -115,6 +115,7 @@ export class DynamicResultResolver {
 				// Note is skipped, not much to reference in HTML snippets.
 				benefit: this.#resolveType("benefit"),
 				detriment: this.#resolveType("detriment"),
+				self: this.data.origin,
 				...extra_data,
 			};
 

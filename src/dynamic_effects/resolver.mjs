@@ -1,14 +1,6 @@
 /**
  * @typedef {"proficiency_rank" | "bonus" | "penalty" | "effect_dice" | "effect_die_size" | "effect_potency" | "effect_damage_type" | "note" | "benefit" | "detriment"} DynamicEffectType
- */
-
-/** TODO: Priority?
- * @typedef {
- *    "add"
- *  | "subtract"
- *  | "downgrade"
- *  | "upgrade"
- * } DynamicEffectMode
+ * @typedef {"add" | "subtract" | "downgrade"  | "upgrade" } DynamicEffectMode
  */
 
 /**
@@ -19,9 +11,17 @@
  * @property {DynamicEffectMode} mode
  * @property {boolean|string|string[]} [applicable_if]
  * @property {any} value
+ * @property {number} [priority]
  * @property {boolean} [defaultEnabled]
  * @property {ModifierType} [modifier_type]
  */
+
+export const MODE_PRIORITIES = {
+	add: 100,
+	subtract: 200,
+	downgrade: 300,
+	upgrade: 400
+}
 
 export class DynamicResultResolver {
 	/**
@@ -40,6 +40,7 @@ export class DynamicResultResolver {
 
 		for (const effect of this.effects) {
 			effect.enabled = effect.defaultEnabled ?? false;
+			effect.priority = effect.priority ?? MODE_PRIORITIES[effect.mode] ?? 404 // 404 should be a good "notice this immediately" number, I think?
 		}
 	}
 
@@ -157,9 +158,11 @@ export class DynamicResultResolver {
 
 		this.results[type] = this.#getDefaultValue(type);
 
-		for (const effect of this.applicableEffects.filter(
-			(e) => e.type === type,
-		)) {
+		const applicableEffects = this.applicableEffects
+			.filter((e) => e.type === type)
+			.sort((a, b) => a.priority - b.priority);
+
+		for (const effect of applicableEffects) {
 			this.#resolveEffect(effect);
 		}
 

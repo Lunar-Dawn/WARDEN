@@ -559,6 +559,25 @@
 				"massive": {
 					"label": "Massive",
 					"desc": "Only applied to <strong>Heavy</strong> or <strong>Huge</strong> weapons. When you <strong>Raise a Weapon</strong>, you add two <strong>Damage Dice</strong> to the next <strong>Strike</strong> you make with it."
+				},
+				"parry": {
+					"label": "Parry",
+					"desc": "When you <strong>Raise a Weapon</strong>, you gain a <strong>+1 Item Bonus</strong> to your <strong>Toughness</strong> against <strong>Strikes</strong>. You gain the <strong>Weapon Parry Reaction</strong>.<ul><li><strong>Weapon Parry (R).</strong> You use the raised weapon to parry a <strong>Melee Strike</strong> before damage is rolled. Increase the <strong>Item Bonus</strong> from <strong>Parry</strong> to <strong>+3</strong> against this <strong>Strike</strong>. If this lowers a <strong>Critical Success</strong> to a <strong>Success</strong>, the weapon is <strong>Damaged</strong. If this lowers a <strong>Success</strong> to a <strong>Failure</strong>, the opponent is <strong>Off-Guard 2</strong>.</li></ul>"
+				},
+				"rapid": {
+					"label": "Rapid",
+					"desc": "Only applied to <strong>Weapons</strong> with <strong>Magazine</strong>. You can use the <strong>Autofire Action</strong>.<ul><li><strong>Autofire (1).</strong> Make up to <strong>4 Strikes</strong>. Each <strong>Strike</strong> after the first expends <strong>1 Ammo</strong>. You must have enough <strong>Ammo</strong> for each <strong>Strike</strong>.</li></ul>"
+				},
+				"reload": {
+					"label_1": "Reload 1",
+					"label_2": "Reload 2",
+					"label_3": "Reload 3",
+					"label_4": "Reload 4",
+					"desc": "The weapon becomes <strong>Discharged</strong> equal to the rating after being used, and it cannot be used for as long as it is <strong>Discharged</strong>. <strong>Discharged</strong> counts down at the beginning of each <strong>Round</strong> for each weapon you're holding, but can also be reduced with <strong>Interact Actions</strong> to <strong>Reload</strong> the weapon."
+				},
+				"reposition": {
+					"label": "Reposition",
+					"desc": "You can use the <strong>Reposition</strong> action with the weapon. It uses your <strong>Combat Proficiency</strong>."
 				}
 			}
 		}

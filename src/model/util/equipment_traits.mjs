@@ -298,8 +298,10 @@ export const WEAPON_TRAITS = {
                 type: "effect_dice",
                 label: "Massive (Weapon Raised)",
                 domains: new Set(["damage", "strike.damage"]),
-                defaultEnabled: false, // TODO: reconsider when we implement Raise a Weapon
-                applicable_if: ["damage.trait.massive"], // TODO: reconsider when we implement Raise a Weapon
+                defaultEnabled: false, // TODO: reconsider when we actually implement Raise a Weapon
+                applicable_if: ["damage.trait.massive", "item-raised"], // TODO: reconsider when we actually implement Raise a Weapon
+                                                                        // This will basically apply EVERY weapon-raising bonus as it is
+                                                                        // Weapon-raising benefits might need to be implemented per-weapon
 
                 modifier_type: "universal",
 
@@ -307,5 +309,84 @@ export const WEAPON_TRAITS = {
                 value: 2,
             }
         ],
-    }
+    },
+    parry: {
+        label: "warden.traits.weapon.parry.label",
+        desc: "warden.traits.weapon.parry.desc",
+        dynamic_effects: [
+            {
+                type: "bonus",
+                label: "Parry (Weapon Raised)",
+                domains: new Set(["toughness"]),
+                defaultEnabled: false, // TODO: reconsider when we actually implement Raise a Weapon
+                applicable_if: ["item.trait.parry", "item-raised"], // TODO: reconsider when we actually implement Raise a Weapon
+                                                                    // This will basically apply EVERY weapon-raising bonus as it is
+                                                                    // Weapon-raising benefits might need to be implemented per-weapon
+
+                modifier_type: "item",
+
+                mode: "add",
+                value: 1,
+            },
+            {
+                type: "bonus",
+                label: "Parry (Weapon Parry)",
+                domains: new Set(["toughness"]),
+                defaultEnabled: false, // TODO: reconsider when we actually implement Raise a Weapon
+                applicable_if: ["item.trait.parry", "item-raised", "weapon-parry"], // TODO: reconsider when we actually implement Raise a Weapon
+                                                                                    // This will basically apply EVERY weapon-raising bonus as it is
+                                                                                    // Weapon-raising benefits might need to be implemented per-weapon
+
+                modifier_type: "item",
+
+                mode: "add",
+                value: 3,
+            }
+        ],
+    },
+    rapid: {
+        label: "warden.traits.weapon.rapid.label",
+        desc: "warden.traits.weapon.rapid.desc",
+        validity_cb: (item) => {
+            return findSimilarTraits(item.traits, "magazine_");
+        },
+        dynamic_effects: []
+    },
+    reload_1: {
+        label: "warden.traits.weapon.reload.label_1",
+        desc: "warden.traits.weapon.reload.desc",
+        validity_cb: (item) => {
+            return !findSimilarTraits(item.traits, "reload_", "1");
+        },
+        dynamic_effects: [] // TODO: Might need a completely unique implementation.
+    },
+    reload_2: {
+        label: "warden.traits.weapon.reload.label_2",
+        desc: "warden.traits.weapon.reload.desc",
+        validity_cb: (item) => {
+            return !findSimilarTraits(item.traits, "reload_", "2");
+        },
+        dynamic_effects: [] // TODO: Might need a completely unique implementation.
+    },
+    reload_3: {
+        label: "warden.traits.weapon.reload.label_3",
+        desc: "warden.traits.weapon.reload.desc",
+        validity_cb: (item) => {
+            return !findSimilarTraits(item.traits, "reload_", "3");
+        },
+        dynamic_effects: [] // TODO: Might need a completely unique implementation.
+    },
+    reload_4: {
+        label: "warden.traits.weapon.reload.label_4",
+        desc: "warden.traits.weapon.reload.desc",
+        validity_cb: (item) => {
+            return !findSimilarTraits(item.traits, "reload_", "4");
+        },
+        dynamic_effects: [] // TODO: Might need a completely unique implementation.
+    },
+    reposition: {
+        label: "warden.traits.weapon.reposition.label",
+        desc: "warden.traits.weapon.reposition.desc",
+        dynamic_effects: [], // TODO: Will need implementation if we ever manually implement the various actions.
+    },
 }

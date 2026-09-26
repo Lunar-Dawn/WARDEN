@@ -41,9 +41,9 @@ class EffectManager extends CommonManager {
 	 * @returns {string} - The formula used for the roll.
 	 */
 	get formula() {
-		const diceSum = this.resolver.calcNonTypeSums("effect_dice");
-		const dieSizeSum = this.resolver.calcNonTypeSums("effect_die_size");
-		const potencySum = this.resolver.calcNonTypeSums("effect_potency");
+		const diceSum = Math.max(1, this.resolver.calcNonTypeSums("effect_dice"));
+		const dieSizeSum = Math.min(12, Math.max(4, this.resolver.calcNonTypeSums("effect_die_size")));
+		const potencySum = Math.min(diceSum, Math.max(1, this.resolver.calcNonTypeSums("effect_potency")));
 
 		const damageTypes = this.resolver.calcNonTypeSums("effect_damage_type");
 		const dmgTypesStr = damageTypes.length > 0 ? `[${damageTypes}]` : "";

@@ -389,4 +389,166 @@ export const WEAPON_TRAITS = {
         desc: "warden.traits.weapon.reposition.desc",
         dynamic_effects: [], // TODO: Will need implementation if we ever manually implement the various actions.
     },
+    seeking: {
+        label: "warden.traits.weapon.seeking.label",
+        desc: "warden.traits.weapon.seeking.desc",
+        dynamic_effects: [
+            {
+                type: "bonus",
+                label: "Seeking (Aimed)",
+                domains: new Set(["attack", "strike.attack"]),
+                defaultEnabled: false, // TODO: reconsider when we actually implement Aiming
+                applicable_if: ["item.trait.seeking", "aiming"], // TODO: reconsider when we actually implement Aiming
+
+                modifier_type: "item",
+
+                mode: "add",
+                value: 3,
+            }
+        ],
+    },
+    single_use: {
+        label: "warden.traits.weapon.single_use.label",
+        desc: "warden.traits.weapon.single_use.desc",
+        dynamic_effects: [],
+    },
+    slow: {
+        label: "warden.traits.weapon.slow.label",
+        desc: "warden.traits.weapon.slow.desc",
+        validity_cb: (item) => {
+            return item.type === "melee";
+        },
+        dynamic_effects: [], // Implemented in the Weapon::runStrike() code.
+    },
+    stun: {
+        label: "warden.traits.weapon.stun.label",
+        desc: "warden.traits.weapon.stun.desc",
+        dynamic_effects: [
+            {
+                type: "note",
+                label: "Stun",
+                domains: new Set(["damage", "strike.damage"]),
+                defaultEnabled: true,
+                applicable_if: ["damage.trait.stun"],
+
+                modifier_type: "universal",
+
+                mode: "add",
+                value: "<p><strong>@Localise[warden.traits.weapon.stun.label]</strong> @Localise[warden.traits.weapon.stun.desc]</p>",
+            }
+        ]
+    },
+    sweep: {
+        label: "warden.traits.weapon.sweep.label",
+        desc: "warden.traits.weapon.sweep.desc",
+        dynamic_effects: [
+            {
+                type: "bonus",
+                label: "Sweep",
+                domains: new Set(["attack", "strike.attack"]),
+                defaultEnabled: true,
+                applicable_if: ["attack.trait.sweep", "map"],
+
+                modifier_type: "universal",
+
+                mode: "add",
+                value: 1,
+            }
+        ]
+    },
+    sundering: {
+        label: "warden.traits.weapon.sundering.label",
+        desc: "warden.traits.weapon.sundering.desc",
+        dynamic_effects: [
+            {
+                type: "note",
+                label: "Sundering",
+                domains: new Set(["attack", "strike.attack"]),
+                defaultEnabled: true,
+                applicable_if: ["attack.trait.sundering"],
+
+                modifier_type: "universal",
+
+                mode: "add",
+                value: "<p><strong>@Localise[warden.traits.weapon.sundering.label]</strong> @Localise[warden.traits.weapon.sundering.desc]</p>",
+            }
+        ],
+    },
+    tangible: {
+        label: "warden.traits.weapon.tangible.label",
+        desc: "warden.traits.weapon.tangible.desc",
+        validity_cb: (item) => {
+            return item.damage_types.some((type) => {
+                const typeData = WARDEN.DAMAGE_TYPES[type];
+
+                if (typeData === undefined) return false;
+                if (typeData.category === "energy" || typeData.category === "special") return true;
+
+                return false;
+            });
+        },
+        dynamic_effects: [
+            {
+                type: "note",
+                label: "Tangible",
+                domains: new Set(["damage", "strike.damage"]),
+                defaultEnabled: true,
+                applicable_if: ["damage.trait.tangible"],
+
+                modifier_type: "universal",
+
+                mode: "add",
+                value: "<p><strong>@Localise[warden.traits.weapon.tangible.label]</strong> @Localise[warden.traits.weapon.tangible.desc]</p>",
+            }
+        ]
+    },
+    thrown: {
+        label: "warden.traits.weapon.thrown.label",
+        desc: "warden.traits.weapon.thrown.desc",
+        dynamic_effects: [
+            {
+                type: "bonus",
+                label: "Combat Proficiency (Thrown)",
+                domains: new Set(["strike.damage"]),
+                applicable_if: ["strike.ranged", "damage.trait.thrown"],
+                defaultEnabled: true,
+
+                modifier_type: "proficiency",
+
+                mode: "upgrade",
+                value: "@profCalc",
+            }
+        ],
+    },
+    trip: {
+        label: "warden.traits.weapon.trip.label",
+        desc: "warden.traits.weapon.trip.desc",
+        dynamic_effects: [], // TODO: Will need implementation if we ever manually implement the various actions.
+    },
+    two_hand: {
+        label: "warden.traits.weapon.two_hand.label",
+        desc: "warden.traits.weapon.two_hand.desc",
+        validity_cb: (item) => {
+            return item.hands === 1 && item.damage_die <= 10;
+        },
+        dynamic_effects: [
+            {
+                type: "effect_die_size",
+                label: "Two-Hand",
+                domains: new Set(["damage", "strike.damage"]),
+                defaultEnabled: false,
+                applicable_if: ["damage.trait.two_hand"],
+
+                modifier_type: "universal",
+
+                mode: "add",
+                value: 2,
+            }
+        ],
+    },
+    unarmed: {
+        label: "warden.traits.weapon.unarmed.label",
+        desc: "warden.traits.weapon.unarmed.desc",
+        dynamic_effects: [],
+    },
 }

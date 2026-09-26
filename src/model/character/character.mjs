@@ -683,7 +683,6 @@ export class CharacterData extends BaseCharacterData {
 				type: _loc("warden.character.FIELDS.path.combat.label"),
 			}),
 			domains: new Set(["strike.damage"]),
-			applicable_if: ["strike.melee"],
 			defaultEnabled: true,
 
 			mode: "upgrade",

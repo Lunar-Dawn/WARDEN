@@ -201,6 +201,10 @@ export class Weapon extends BaseEquipment {
 				weapon: this.parent.name,
 			});
 			against.push("toughness");
+
+			if (this.traits.has("slow")) {
+			against.push("perception");
+			}
 		} else {
 			title = _loc("warden.action.ranged_strike_weapon_title", {
 				weapon: this.parent.name,

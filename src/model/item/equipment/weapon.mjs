@@ -1,4 +1,3 @@
-import { DAMAGE_TYPES } from "../../../damage_type.mjs";
 import { runCheck } from "../../../roll/check_manager.mjs";
 import { getTarget } from "../../../roll/common_manager.mjs";
 import { runEffect } from "../../../roll/effect_manager.mjs";
@@ -132,7 +131,7 @@ export class Weapon extends BaseEquipment {
 				modifier_type: "universal",
 
 				mode: "add",
-				value: DAMAGE_TYPES[damage_type].abbreviation,
+				value: WARDEN.DAMAGE_TYPES[damage_type].abbreviation,
 			};
 		}
 	}

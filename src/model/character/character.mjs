@@ -698,7 +698,7 @@ export class CharacterData extends BaseCharacterData {
 			modifier_type: "proficiency",
 
 			mode: "upgrade",
-			value: "@profCalc",
+			value: "@proficiency_rank",
 		};
 	}
 

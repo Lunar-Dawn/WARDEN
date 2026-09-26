@@ -516,7 +516,7 @@ export const WEAPON_TRAITS = {
                 modifier_type: "proficiency",
 
                 mode: "upgrade",
-                value: "@profCalc",
+                value: "@proficiency_rank",
             }
         ],
     },

@@ -121,6 +121,19 @@ export class Weapon extends BaseEquipment {
 			value: this.damage_die,
 		};
 
+		yield {
+			type: "penalty",
+			label: "Damaged",
+			domains: new Set([`item.${this.parent.id}`]),
+			applicable_if: ["attack.condition.damaged"],
+			defaultEnabled: true,
+
+			modifier_type: "item",
+
+			mode: "add",
+			value: 2,
+		};
+
 		for (const damage_type of this.damage_types) {
 			yield {
 				type: "effect_damage_type",
@@ -142,6 +155,8 @@ export class Weapon extends BaseEquipment {
 			"strike",
 			"strike.attack",
 			`strike.${this.parent.id}.attack`,
+			`item.${this.parent.id}`, // Used for general modifiers for the item, like being damaged.
+									  // Could be changed if it's too generic later.
 		]);
 		const discriminators = new Set();
 

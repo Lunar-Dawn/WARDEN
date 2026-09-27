@@ -149,6 +149,9 @@ export class BaseEquipment extends BaseItem {
 	getDiscriminators(prefix = "") {
 		const determined_prefix = prefix.length > 0 ? prefix : "item";
 		const discriminators = super.getDiscriminators(determined_prefix);
+		
+		// General item properties-related discriminators.
+		discriminators.push(`${determined_prefix}.condition.${this.condition}`);
 
 		const trait_discriminators = this.traits.map((trait) => `${determined_prefix}.trait.${trait}`);
 		

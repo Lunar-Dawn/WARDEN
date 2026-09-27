@@ -437,10 +437,7 @@ export class CharacterData extends BaseCharacterData {
 	calculateBasicStats() {
 		// Hit Points
 		{
-			const resolver = this.otherResolver({
-				domains: ["hit_points"],
-				discriminators: [],
-			});
+			const resolver = this.getDynamicResultResolver(["hit_points"], []);
 			const bonus = resolver.modifierSum();
 
 			this.hit_points.max = bonus;
@@ -452,10 +449,7 @@ export class CharacterData extends BaseCharacterData {
 
 		// Strain Points
 		{
-			const resolver = this.otherResolver({
-				domains: ["strain_points"],
-				discriminators: [],
-			});
+			const resolver = this.getDynamicResultResolver(["strain_points"], []);
 			const bonus = resolver.modifierSum();
 
 			this.strain.max = bonus;
@@ -464,15 +458,9 @@ export class CharacterData extends BaseCharacterData {
 
 		// Speed
 		{
-			const speed_resolver = this.otherResolver({
-				domains: ["speed"],
-				discriminators: [],
-			});
+			const speed_resolver = this.getDynamicResultResolver(["speed"], []);
 			const speed_bonus = speed_resolver.modifierSum();
-			const base_speed_resolver = this.otherResolver({
-				domains: ["base_speed"],
-				discriminators: [],
-			});
+			const base_speed_resolver = this.getDynamicResultResolver(["base_speed"], []);
 			const base_speed_bonus = base_speed_resolver.modifierSum();
 
 			this.speed = {};
@@ -735,22 +723,6 @@ export class CharacterData extends BaseCharacterData {
 
 		if (proficiency_name === "skill") {
 			domains.add("skill-path");
-		}
-
-		return this.getDynamicResultResolver(domains, discriminators);
-	}
-
-	/**
-	 * Parameters to resolve other data, that don't necessarily have to be checks.
-	 *
-	 * @param {string[]|Set<string>} domains - Domains for this resolving.
-	 * @param {string[]|Set<string>} discriminators - Discriminators for this resolving.
-	 *
-	 * @returns DynamicResultResolver
-	 */
-	otherResolver({ domains = [], discriminators = [] } = {}) {
-		if (Array.isArray(domains)) {
-			domains = new Set(domains);
 		}
 
 		return this.getDynamicResultResolver(domains, discriminators);

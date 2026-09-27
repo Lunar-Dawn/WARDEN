@@ -26,7 +26,7 @@ const generateBoolArray = (total, context) => {
 };
 
 const prettifyModifier = (value, prefix = "", postfix = "") => {
-	const sign = isNaN(value) ? "" : value >= 0 ? "+" : "-";
+	const sign = isNaN(value) ? "" : value >= 0 ? "+" : "";
 
 	if (String(value).length > 3)
 		return "...";

@@ -43,7 +43,7 @@ export class WARDENItemSheet extends HandlebarsApplicationMixin(ItemSheet) {
 		},
 		position: {
 			height: 500,
-		}
+		},
 	};
 
 	async _prepareContext(options) {
@@ -62,6 +62,20 @@ export class WARDENItemSheet extends HandlebarsApplicationMixin(ItemSheet) {
 		return context;
 	}
 
+	_configureRenderParts(options) {
+		const parts = super._configureRenderParts(options);
+
+		const enabled_parts = {
+			header: parts.header,
+			tabs: parts.tabs,
+		};
+
+		this.item.system.supportedTabs?.forEach(
+			(tab) => (enabled_parts[tab] = parts[tab]),
+		);
+
+		return enabled_parts;
+	}
 	_getTabsConfig(_) {
 		const tabs =
 			this.item.system.supportedTabs?.map((tab) => ({ id: tab })) ?? [];
@@ -84,7 +98,7 @@ export class WARDENItemSheet extends HandlebarsApplicationMixin(ItemSheet) {
 				context.description =
 					await foundry.applications.ux.TextEditor.implementation.enrichHTML(
 						this.item.system.description,
-						{actor: this.item.actor, item: this.item}
+						{ actor: this.item.actor, item: this.item },
 					);
 				break;
 			case "effects":

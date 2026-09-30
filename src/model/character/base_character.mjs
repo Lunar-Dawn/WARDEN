@@ -103,7 +103,47 @@ export class BaseCharacterData extends TypeDataModel {
 	prepareDerivedData() {
 		super.prepareDerivedData();
 
+		this.calculateBasicStats();
 		this.#collectDynamicEffects();
+	}
+
+	/**
+	 * Common statistics for both player characters and opponents.
+	 * The base dynamic effects to actually fill these can be found in the respective child classes.
+	 */
+	calculateBasicStats() {
+		// Hit Points
+		{
+			const resolver = this.getDynamicResultResolver(["hit_points"], []);
+			const bonus = resolver.modifierSum();
+
+			this.hit_points.max = bonus;
+			this.hit_points.value = Math.min(
+				this.hit_points.value,
+				this.hit_points.max,
+			);
+		}
+
+		// Strain Points
+		{
+			const resolver = this.getDynamicResultResolver(["strain_points"], []);
+			const bonus = resolver.modifierSum();
+
+			this.strain.max = bonus;
+			this.strain.value = Math.min(this.strain.value, this.strain.max);
+		}
+
+		// Speed
+		{
+			const speed_resolver = this.getDynamicResultResolver(["speed"], []);
+			const speed_bonus = speed_resolver.modifierSum();
+			const base_speed_resolver = this.getDynamicResultResolver(["base_speed"], []);
+			const base_speed_bonus = base_speed_resolver.modifierSum();
+
+			this.speed = {};
+			this.speed.base = base_speed_bonus;
+			this.speed.value = this.speed.base + speed_bonus;
+		}
 	}
 
 	/**

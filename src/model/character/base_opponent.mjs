@@ -56,6 +56,7 @@ export class BaseOpponentData extends BaseCharacterData {
 	*getBaseDynamicEffects() {
 		yield* super.getBaseDynamicEffects();
 
+		yield* this.#createBaseStatDynamicEffects();
 		yield* this.#createStatisticsDynamicEffects();
 		yield* this.#createProficiencyDynamicEffects();
 	}
@@ -193,23 +194,6 @@ export class BaseOpponentData extends BaseCharacterData {
 		};
 	}
 
-	prepareDerivedData() {
-		super.prepareDerivedData();
-
-		this.hit_points.max = this.max_hit_points;
-		this.hit_points.value = Math.min(
-			this.hit_points.value,
-			this.hit_points.max,
-		);
-
-		this.strain.max = this.max_strain;
-		this.strain.value = Math.min(this.strain.value, this.strain.max);
-
-		this.speed = {};
-		this.speed.base = 5;
-		this.speed.value = this.speed.base;
-	}
-
 	get majorProficiencyRank() {
 		switch (this.level) {
 			case 0:
@@ -242,6 +226,45 @@ export class BaseOpponentData extends BaseCharacterData {
 			default:
 				return 2;
 		}
+	}
+
+	/**
+	 * Creates the basic dynamic effects to fill stuff out like HP, SP, and speed.
+	 */
+	*#createBaseStatDynamicEffects() {
+		yield {
+			type: "bonus",
+			label: "Base Hit Points",
+			domains: new Set(["hit_points"]),
+			defaultEnabled: true,
+
+			modifier_type: "proficiency",
+
+			mode: "upgrade",
+			value: 10
+		};
+		yield {
+			type: "bonus",
+			label: "Base Strain Points",
+			domains: new Set(["strain_points"]),
+			defaultEnabled: true,
+
+			modifier_type: "proficiency",
+
+			mode: "upgrade",
+			value: 5
+		};
+		yield {
+			type: "bonus",
+			label: "Base Speed",
+			domains: new Set(["base_speed"]),
+			defaultEnabled: true,
+
+			modifier_type: "proficiency",
+
+			mode: "upgrade",
+			value: 5,
+		};
 	}
 
 	/**

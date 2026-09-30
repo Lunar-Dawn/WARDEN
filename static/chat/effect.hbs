@@ -27,3 +27,12 @@
 		<h4 class="dice-total {{ nat_class }}">{{ total }}</h4>
 	</div>
 </div>
+<div class="dice-apply-changes">
+	<button type="button" data-action="applyDamage" 
+		data-damage-types="{{ damage_types }}" 
+		data-damage-traits="{{ damage_traits }}"
+		data-damage-total={{total}}
+		title="{{localize "warden.roll.apply_damage"}}">
+        <span class="label">{{localize "warden.roll.apply_damage"}}</span>
+    </button>
+</div>

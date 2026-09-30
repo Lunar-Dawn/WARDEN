@@ -724,4 +724,21 @@ export class CharacterData extends BaseCharacterData {
 
 		return this.getDynamicResultResolver(domains, discriminators);
 	}
+
+	/**
+	 * A genuinely insane implementation, but hey. On the spot, force the apparel to create its resistance bonus.
+	 * 
+	 * @param {string} type The damage type that would apply to the character.
+	 * @param {string[]} traits Traits that would modify how the damage is applied.
+	 */
+	prepareApparelResistances(type, traits) {
+		super.prepareApparelResistances(type, traits);
+
+		const apparel = this.equipped_items.filter(x => x.type === "apparel");
+		const apparel_effects = apparel.map(x => x.system.getArmourEffect(type, traits));
+
+		apparel_effects.forEach(effect => {
+			this.dynamic_effects.push(effect);
+		});
+	}
 }

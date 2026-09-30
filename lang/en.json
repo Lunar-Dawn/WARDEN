@@ -20,6 +20,10 @@
 		}
 	},
 	"warden": {
+		"canvas": {
+			"select-one-or-more-tokens": "Select one or more tokens!"
+		},
+
 		"character": {
 			"sheet": {
 				"label": "WARDEN Player Character Sheet",
@@ -447,7 +451,9 @@
 				"item": "Item Modifier",
 				"status": "Status Modifier",
 				"circumstance": "Circumstance Modifier"
-			}
+			},
+			"apply_damage": "Apply Damage",
+			"damage_taken": "{name} takes <strong>{damage}</strong> damage."
 		},
 		"action": {
 			"strike": "Strike",

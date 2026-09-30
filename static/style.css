@@ -773,7 +773,16 @@
 	min-height: fit-content;
 }
 
-/* Override to allow floating roll button to be pressed */
-#warden-chat-roll-button {
-	pointer-events: all;
+.dice-apply-changes {
+	display: flex;
+	gap: 0.25rem;
+	justify-content: center;
+	margin-top: 3px;
+
+	 button {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+	 }
 }

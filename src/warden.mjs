@@ -28,6 +28,7 @@ import { WEAPON_TRAITS } from "./model/util/equipment_traits.mjs";
 import { enrichTextEditor } from "./html.mjs";
 import { runCheck } from "./roll/check_manager.mjs";
 import { runEffect } from "./roll/effect_manager.mjs";
+import { WardenSidebar } from "./ui/sidebar.mjs";
 
 globalThis["WARDEN"] = {};
 globalThis["WARDEN"].DAMAGE_TYPES = DAMAGE_TYPES;
@@ -112,6 +113,8 @@ Hooks.once("init", () => {
 		pattern: /@(Localize|Localise)\[([^\]]+)\](?:{([^}]+)})?/g,
 		enricher: (match, options) => enrichTextEditor(match, options),
 	});
+
+	CONFIG.ui.sidebar = WardenSidebar;
 
 	registerHelpers();
 });

@@ -103,8 +103,8 @@ export class BaseCharacterData extends TypeDataModel {
 	prepareDerivedData() {
 		super.prepareDerivedData();
 
-		this.calculateBasicStats();
 		this.#collectDynamicEffects();
+		this.calculateBasicStats();
 	}
 
 	/**
@@ -283,6 +283,16 @@ export class BaseCharacterData extends TypeDataModel {
 	}
 
 	/**
+	 * A genuinely insane implementation, but hey. On the spot, force the apparel to create its resistance bonus.
+	 * 
+	 * @param {string} type The damage type that would apply to the character.
+	 * @param {string[]} traits Traits that would modify how the damage is applied.
+	 */
+	prepareApparelResistances(type, traits) {
+		// To be overwritten by child classes.
+	}
+
+	/**
 	 * Returns a list of domains that describe the current status of the character.
 	 *
 	 * @param {string} prefix A custom prefix to differentiate domains. Defaults to `character`.
@@ -442,5 +452,76 @@ export class BaseCharacterData extends TypeDataModel {
 		}
 
 		await foundry.documents.modifyBatch(operations);
+	}
+
+	/**
+	 * @typedef DamageApplicationData
+	 * 
+	 * Data about the incoming damage.
+	 * 
+	 * @property {integer} total The amount of incoming damage.
+	 * @property {string[]} types The damage types of the incoming damage. These *should* be keys in the WARDEN.DAGAME_TYPES struct.
+	 * @property {string[]} traits The traits of the incoming damage, where relevant. Hardcode hell.
+	 */
+
+	/**
+	 * @brief Applies damage to the character, considering immunities, weaknesses, and resistance.
+	 * 
+	 * @details The damage application favours the "attacker", or in other words, picks the worst options for the
+	 * character every time. This is mainly based on asking Raven how the calculation is actually to be interpreted.
+	 * 
+	 * @param {DamageApplicationData} damage The damage data to apply to the character.
+	 */
+	async applyDamage(damage) {
+		let calcDetails = {
+			immune: true,
+			resistance: undefined,
+			weakness: undefined
+		}
+
+		damage.types.forEach(type => {
+			// Immunity
+			{
+				const immunityResolver = this.getDynamicResultResolver(["damage.immunity.all", `damage.immunity.${type}`], []);
+				const immunity = immunityResolver.modifierSum();
+
+				// This should nullify immunities unless the character is immune to EVERY damage type.
+				calcDetails.immune = calcDetails.immune && immunity > 0;
+			}
+
+			// Resistance
+			{
+				this.prepareApparelResistances(type, damage.traits);
+
+				const resistanceResolver = this.getDynamicResultResolver(["damage.resistance.all", `damage.resistance.${type}`], []);
+				const resistance = resistanceResolver.modifierSum();
+
+				// Take the lower of the current detected resistance and this new one.
+				// Remember, when applying damage, the calculations should favour the attacker!
+				calcDetails.resistance = calcDetails.resistance === undefined ? resistance : Math.min(calcDetails.resistance, resistance);
+			}
+
+			// Weakness
+			{
+				const weaknessResolver = this.getDynamicResultResolver(["damage.weakness.all", `damage.weakness.${type}`], []);
+				const weakness = weaknessResolver.modifierSum();
+
+				// Take the higher of the current detected weakness and this new one.
+				// Remember, when applying damage, the calculations should favour the attacker!
+				calcDetails.weakness = calcDetails.weakness === undefined ? weakness : Math.max(calcDetails.weakness, weakness);
+			}
+		});
+
+		const finalDamage = calcDetails.immune ? 0 : Math.max(0, damage.total + calcDetails.weakness - calcDetails.resistance);
+		const content = game.i18n.localize("warden.roll.damage_taken", {name: this.parent.name, damage: finalDamage});
+
+		if (finalDamage > 0)
+			await this.parent.update({"system.hit_points.value": Math.max(0, this.hit_points.value - finalDamage)});
+
+		// I don't think this is correct, but I gotta get rid of the apparel dynamic effects somehow.
+		this.prepareBaseData();
+		this.prepareDerivedData();
+
+		ChatMessage.create({content});
 	}
 }

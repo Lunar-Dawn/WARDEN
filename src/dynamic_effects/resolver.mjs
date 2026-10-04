@@ -189,16 +189,122 @@ export class DynamicResultResolver {
 
 	#resolveDiscriminator(discriminators, condition) {
 		if (typeof condition === "string")
-			return discriminators.has(condition)
+			return discriminators.has(condition);
 		if (typeof condition === "boolean") // ...Sure.
 			return condition;
 
 		if (typeof condition === "object") {
 			if (Object.hasOwn(condition, "not"))
 				return !this.#resolveDiscriminator(discriminators, condition.not);
+			
+			return this.#resolveComparisonCondition(discriminators, condition);
 		}
 
 		return false;
+	}
+
+	/**
+	 * @brief Given a discriminator that is implied to have a "sub-value", looks through the discriminators
+	 * list to get said value.
+	 * 
+	 * @details Some discriminators are written in the format like this: "example.discriminator.5",
+	 * with the number part typically describing some kind of value for the thing that discriminator
+	 * talks about -- easiest example is that you could have a "character.hit_points.percent.50" discriminator
+	 * that tells you that the current character is at 50% of their HP.
+	 * 
+	 * This function allows you to get back the value of the discriminator by giving in the part before 
+	 * the number -- so in the above examples, giving "example.discriminator" would get you back 5, and
+	 * givinbg "character.hit_points.percent" would get you back 50.
+	 * 
+	 * @param {string[]} discriminators An array of all the discriminators currently applicable.
+	 * @param {string|number} searched_discriminator The discriminator whose value to get. Can also be a number.
+	 * In that case, the function just returns it immediately.
+	 * @returns {number|null} The number value of the discriminator as detailed in the... details, or "null", if for
+	 * some reason it's not obtainable (either it doesn't exist or it's a string, most often).
+	 */
+	#getValueOfDiscriminator(discriminators, searched_discriminator) {
+		if (Number.isInteger(searched_discriminator))
+			return searched_discriminator;
+
+		const searched_txt = `${searched_discriminator}.`;
+
+		const potential_element = discriminators
+			.filter(x => x.startsWith(searched_txt))
+			.map(x => x.replace(searched_txt, ''))
+			.map(Number.parseInt)
+			.keys().next().value; // <-- God, I hate JavaScript sets.
+
+		if (Number.isInteger(potential_element))
+			return potential_element;
+
+		return null;
+	}
+
+	/**
+	 * @brief Tries to perform comparations based on the received condition and discriminators.
+	 * 
+	 * @details This function expects a condition somewhat like this:
+	 * 
+	 * ```
+	 * 	{
+	 * 	    "lt": [
+	 * 	        "character.hit_points.percent",
+	 * 	        50
+	 *      ]
+	 *  }
+	 * ```
+	 * 
+	 * In this example, the condition looks for a discriminator that details the character's current
+	 * percentage of hit points, and if it's less than half, the condition succeeds.
+	 * In any other case (the percentage is more than 50%, the condition is malformatted, there's no
+	 * detailing discriminator, there IS a discriminator, but it's value is malformatted), the condition fails.
+	 * 
+	 * For why some discriminators are formatted like that, see DynamicResultResolver.#getValueOfDiscriminator().
+	 * 
+	 * At the time of writing, you can use four different keys:
+	 * - "gt": the first element is Greater Than the second,
+	 * - "gte": the first element is Greater Than or Equal to the second,
+	 * - "lt": the first element is Lesser Than the second,
+	 * - "lte": the first element is Lesser Than or Equal to the second.
+	 * 
+	 * @param {string[]} discriminators An array of all the discriminators currently applicable.
+	 * @param {any} condition The condition to resolve. See the detailed description of this function for, well, details.
+	 * @returns True if the condition resolved correctly, and its result was true. False in every other case.
+	 */
+	#resolveComparisonCondition(discriminators, condition) {
+		const keys = Object.keys(condition);
+
+		if (keys.length !== 1)
+			return false;
+
+		const comparator_key = keys.at(0);
+
+		if (!Array.isArray(condition[comparator_key]))
+			return false;
+
+		const compared_elements = Array.from(condition[comparator_key]);
+
+		if (compared_elements.length !== 2)
+			return false;
+
+		const first_element = this.#getValueOfDiscriminator(discriminators, compared_elements[0]);
+		const second_element = this.#getValueOfDiscriminator(discriminators, compared_elements[1]);
+
+		if (first_element === null || second_element === null)
+			return false;
+		
+		switch (comparator_key) {
+			case "gt":
+				return first_element > second_element;
+			case "gte":
+				return first_element >= second_element;
+			case "lt":
+				return first_element < second_element;
+			case "lte":
+				return first_element <= second_element;
+			default:
+				return false;
+		}
 	}
 
 	#getEffectTarget(effect) {

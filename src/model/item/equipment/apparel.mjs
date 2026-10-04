@@ -77,6 +77,10 @@ export class Apparel extends BaseEquipment {
 		return properties;
 	}
 
+	static get traitOptions() {
+		return WARDEN.APPAREL_TRAITS;
+	}
+
 	/**
 	 * Displays armor value, strength, and weakness
 	 * @returns {HTMLElement}

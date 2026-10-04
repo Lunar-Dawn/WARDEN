@@ -489,6 +489,12 @@
 		},
 
 		"traits": {
+			"apparel": {
+				"advanced": {
+					"label": "Advanced",
+					"desc": "You must be at least <strong>Adept (+3)</strong> in <strong>Combat</strong> or suffer a <strong>-2 Item Penalty</strong> to all <strong>Checks</strong> when wearing this <strong>Apparel</strong>."
+				}
+			},
 			"weapon": {
 				"activated": {
 					"label": "Activated",

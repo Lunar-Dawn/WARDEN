@@ -34,6 +34,20 @@
  * @property {}
  */
 
+
+/**
+ * 
+ * @typedef {Object} ApparelTraitType
+ * @property {string} label - The "name" for the trait as shown to the user.
+ * @property {string} desc - The description of the trait, as shown to the user.
+ * @property {?ItemSystemCallback} validity_cb - A function that determines whether a trait is valid for the item. 
+ *                                               Can be null, in which case, the trait is always valid.
+ * @property {DynamicEffect[]} dynamic_effects - An array of dynamic effects that are going to be applied to all characters, 
+ *                                               even if they don't have an item with this trait.
+ *                                               Can be used to set up DEs that affect every item with a specific trait ahead of time.
+ * @property {}
+ */
+
 /**
  * Looks through a set of traits, and finds traits that indicate that they're part of the family of traits a given trait is,
  * but *isn't* the given trait themselves. As an example, if you have a given trait of `magazine_1`, you could use this to look for
@@ -551,4 +565,37 @@ export const WEAPON_TRAITS = {
         desc: "warden.traits.weapon.unarmed.desc",
         dynamic_effects: [],
     },
+}
+
+/**
+ * @type Object.<string, ApparelTraitType>
+ */
+export const APPAREL_TRAITS = {
+    advanced: {
+        label: "warden.traits.apparel.advanced.label",
+        desc: "warden.traits.apparel.advanced.desc",
+        dynamic_effects: [
+            {
+                type: "penalty",
+                label: "Advanced (Apparel)",
+                domains: new Set(["combat", "special", "skill", "toughness", "perception", "resolve"]),
+                defaultEnabled: true,
+                applicable_if: [
+                    "character.apparel.trait.advanced",
+                    {"not": "defense"},
+                    {
+                        "lt": [
+                            "character.path.combat.rank",
+                            3
+                        ]
+                    }
+                ],
+
+                modifier_type: "item",
+
+                mode: "add",
+                value: 2,
+            }
+        ]
+    }
 }

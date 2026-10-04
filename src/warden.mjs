@@ -24,7 +24,7 @@ import { CharacterSheet } from "./sheet/character.mjs";
 import { EquipmentSheet } from "./sheet/equipment.mjs";
 import { ConditionSheet } from "./sheet/condition.mjs";
 import { OpponentSheet } from "./sheet/opponent.mjs";
-import { WEAPON_TRAITS } from "./model/util/equipment_traits.mjs";
+import { APPAREL_TRAITS, WEAPON_TRAITS } from "./model/util/equipment_traits.mjs";
 import { enrichTextEditor } from "./html.mjs";
 import { runCheck } from "./roll/check_manager.mjs";
 import { runEffect } from "./roll/effect_manager.mjs";
@@ -35,6 +35,7 @@ globalThis["WARDEN"].DAMAGE_TYPES = DAMAGE_TYPES;
 globalThis["WARDEN"].DAMAGE_TYPE_CHOICES = DAMAGE_TYPE_CHOICES;
 globalThis["WARDEN"].DAMAGE_CATEGORY_CHOICES = DAMAGE_CATEGORY_CHOICES;
 globalThis["WARDEN"].WEAPON_TRAITS = WEAPON_TRAITS;
+globalThis["WARDEN"].APPAREL_TRAITS = APPAREL_TRAITS;
 
 globalThis["WARDEN"].utils = {};
 globalThis["WARDEN"].utils.runCheck = runCheck;

@@ -741,4 +741,33 @@ export class CharacterData extends BaseCharacterData {
 			this.dynamic_effects.push(effect);
 		});
 	}
+
+	getDiscriminators(prefix = "") {
+		const determined_prefix = prefix.length > 0 ? prefix : "character";
+		
+		const worn_apparel_discriminators = this.equipped_items
+			.filter(x => x.type === "apparel")
+			.map(x => x.system.getDiscriminators(`${determined_prefix}.apparel`))
+			.flat();
+		const super_discriminators = super.getDiscriminators(determined_prefix);
+
+		const path_discriminators = [
+			`${determined_prefix}.path.combat.rank.${this.path.combat.rank}`,
+			`${determined_prefix}.path.special.rank.${this.path.special.rank}`,
+			`${determined_prefix}.path.skill.rank.${this.path.skill.rank}`
+		]
+
+		const defence_discriminators = [
+			`${determined_prefix}.defense.toughness.rank.${this.defense.toughness.rank}`,
+			`${determined_prefix}.defense.perception.rank.${this.defense.perception.rank}`,
+			`${determined_prefix}.defense.resolve.rank.${this.defense.resolve.rank}`
+		]
+
+		return [
+			...worn_apparel_discriminators,
+			...super_discriminators,
+			...path_discriminators,
+			...defence_discriminators
+		]
+	}
 }

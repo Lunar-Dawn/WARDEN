@@ -446,6 +446,9 @@ export class CharacterSheet extends BaseCharacterSheet {
 		const rollData = this.actor.getRollData();
 		const speaker = ChatMessage.getSpeaker({ actor: this.actor });
 
+		const domains = this.actor.system.getDomains();
+		const discriminators = this.actor.system.getDiscriminators();
+
 		/**
 		 * @type CheckParameters
 		 */
@@ -453,7 +456,7 @@ export class CharacterSheet extends BaseCharacterSheet {
 		let resolver;
 		switch (target.dataset.type) {
 			case "untrained":
-				resolver = this.actor.system.untrainedCheckResolver();
+				resolver = this.actor.system.untrainedCheckResolver({domains, discriminators});
 				parameters = {
 					title: _loc("warden.check_label", {
 						type: _loc("warden.proficiency_rank.0"),
@@ -463,7 +466,7 @@ export class CharacterSheet extends BaseCharacterSheet {
 			case "proficiency":
 				const name = target.dataset.name;
 				const locPath = target.dataset.path;
-				resolver = this.actor.system.proficiencyCheckResolver(name);
+				resolver = this.actor.system.proficiencyCheckResolver(name, {domains, discriminators});
 				parameters = {
 					title: _loc("warden.check_label", {
 						type: _loc(`warden.character.FIELDS.${locPath}.label`),
@@ -472,7 +475,7 @@ export class CharacterSheet extends BaseCharacterSheet {
 				break;
 			case "skill":
 				const skill = target.dataset.skill;
-				resolver = this.actor.system.skillCheckResolver(skill);
+				resolver = this.actor.system.skillCheckResolver(skill, {domains, discriminators});
 				parameters = {
 					title: _loc("warden.check_label", {
 						type: _loc(
@@ -485,7 +488,7 @@ export class CharacterSheet extends BaseCharacterSheet {
 				const id = target.dataset.id;
 				const knowledge_skill = this.actor.system.knowledge_skills[id];
 
-				resolver = this.actor.system.knowledgeCheckResolver(id);
+				resolver = this.actor.system.knowledgeCheckResolver(id, {domains, discriminators});
 				parameters = {
 					title: _loc("warden.check_label", {
 						type: knowledge_skill.topic,

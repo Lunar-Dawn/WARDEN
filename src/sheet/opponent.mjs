@@ -83,6 +83,9 @@ export class OpponentSheet extends BaseCharacterSheet {
 		const rollData = this.actor.getRollData();
 		const speaker = ChatMessage.getSpeaker({ actor: this.actor });
 
+		const domains = this.actor.system.getDomains();
+		const discriminators = this.actor.system.getDiscriminators();
+
 		/**
 		 * @type CheckParameters
 		 */
@@ -91,7 +94,7 @@ export class OpponentSheet extends BaseCharacterSheet {
 		switch (target.dataset.type) {
 			case "statistic":
 				const major = target.dataset.major === "true";
-				resolver = this.actor.system.statisticResolver(major);
+				resolver = this.actor.system.statisticResolver(major, {domains, discriminators});
 				parameters = {
 					title: _loc("warden.check_label", {
 						type: _loc(
@@ -103,7 +106,7 @@ export class OpponentSheet extends BaseCharacterSheet {
 			case "proficiency":
 				const name = target.dataset.name;
 				const locPath = target.dataset.path;
-				resolver = this.actor.system.proficiencyCheckResolver(name);
+				resolver = this.actor.system.proficiencyCheckResolver(name, {domains, discriminators});
 				parameters = {
 					title: _loc("warden.check_label", {
 						type: _loc(`warden.character.FIELDS.${locPath}.label`),

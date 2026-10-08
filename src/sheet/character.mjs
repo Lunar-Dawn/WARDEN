@@ -318,6 +318,14 @@ export class CharacterSheet extends BaseCharacterSheet {
 	async _onRender(context, options) {
 		await super._onRender(context, options);
 
+		this.#bindEquipmentButtonListeners();
+		this.#bindActionButtonListeners();
+	}
+
+	/**
+	 * Bind `click` event listeners to equipped item buttons.
+	 */
+	#bindEquipmentButtonListeners() {
 		for (const item of this.actor.system.equipped_items) {
 			const itemButtons = item.system.equippedButtons;
 
@@ -329,6 +337,23 @@ export class CharacterSheet extends BaseCharacterSheet {
 
 			buttonElements.forEach((button, index) => {
 				button.addEventListener("click", itemButtons[index].onClick);
+			});
+		}
+	}
+
+	/**
+	 * Bind `click` event listeners to action buttons.
+	 */
+	#bindActionButtonListeners() {
+		for (const action of this.actor.system.actions) {
+			const buttons = action.buttons;
+
+			const buttonElements = this.element.querySelectorAll(
+				`[data-action-source="${action.source.id}"] button`,
+			);
+
+			buttonElements.forEach((button, index) => {
+				button.addEventListener("click", buttons[index].handler);
 			});
 		}
 	}

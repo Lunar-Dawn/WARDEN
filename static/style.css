@@ -49,6 +49,9 @@
 .flex-grow {
 	flex-grow: 1;
 }
+.flex-wrap {
+	flex-wrap: wrap;
+}
 
 .zero-pad {
 	padding: 0;
@@ -779,10 +782,10 @@
 	justify-content: center;
 	margin-top: 3px;
 
-	 button {
-            align-items: center;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-	 }
+	button {
+		align-items: center;
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+	}
 }

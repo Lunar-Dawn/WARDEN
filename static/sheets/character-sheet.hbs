@@ -433,10 +433,15 @@
 		<section class="col-span-2">
 			<header class="col-span-2 black header grid place-center">Actions</header>
 			{{#each actions}}
-				<div class="col-span-2">
+				<div class="col-span-2" data-action-source="{{ action.source.id }}">
 					<header class="black bold grid place-center">{{ action.title }}</header>
-					{{#each buttons}}
-					{{/each}}
+					<div class="flex flex-wrap">
+						{{#each buttons}}
+							<button>
+								{{ text }}
+							</button>
+						{{/each}}
+					</div>
 				</div>
 			{{/each}}
 		</section>

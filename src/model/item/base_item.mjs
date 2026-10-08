@@ -32,14 +32,32 @@ export class BaseItem extends TypeDataModel {
 	}
 
 	/**
- * Returns a list of discriminators that describe the current status of the item.
- *
- * @param {string} prefix A custom prefix to differentiate discriminators. Defaults to `item`.
- * @returns {string[]} The relevant discriminators to the item.
- */
+	 * Returns a list of discriminators that describe the current status of the item.
+	 *
+	 * @param {string} prefix A custom prefix to differentiate discriminators. Defaults to `item`.
+	 * @returns {string[]} The relevant discriminators to the item.
+	 */
 	getDiscriminators(prefix = "") {
 		const determined_prefix = prefix.length > 0 ? prefix : "item";
 
 		return [];
+	}
+
+	/**
+	 * Does this item provide an action to the character sheet?
+	 *
+	 * @return {boolean}
+	 */
+	providesAction() {
+		return false;
+	}
+
+	/**
+	 * Get the action that this item displays on the character sheet.
+	 *
+	 * @return {?Action}
+	 */
+	getAction() {
+		return null;
 	}
 }

@@ -1,11 +1,11 @@
-import { BaseItem } from "../base_item.mjs";
+import { BaseFeature } from "./base_feature.mjs";
 
 const { HTMLField, StringField } = foundry.data.fields;
 
 /**
  * @property {string} description
  */
-export class Feat extends BaseItem {
+export class Feat extends BaseFeature {
 	static LOCALIZATION_PREFIXES = ["warden.feat"];
 
 	static defineSchema() {

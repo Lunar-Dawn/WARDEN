@@ -1,3 +1,6 @@
+import { runCheck } from "./roll/check_manager.mjs";
+import { getTarget } from "./roll/common_manager.mjs";
+
 /**
  * The local representation of an Action with buttons for checks and effects
  */
@@ -19,6 +22,7 @@ export class Action {
 		this.title = title;
 
 		this.source = source;
+		this.actor = source.parent;
 
 		this.check_type = check_type;
 		this.check_domains = check_domains;
@@ -100,12 +104,74 @@ export class Action {
 		return buttons;
 	}
 
+	#getResolver(base_domains) {
+		const target = getTarget();
+
+		const domains = [
+			...base_domains,
+			...this.actor.system.getDomains(),
+			...(target?.getDomains("target") ?? []),
+		];
+		const discriminators = [
+			...this.actor.system.getDiscriminators(),
+			...(target?.getDiscriminators("target") ?? []),
+		];
+
+		return this.actor.system.getDynamicResultResolver(
+			domains,
+			discriminators,
+		);
+	}
+
 	#generateCheckHandler() {
-		return () => console.log("#generateCheckHandler");
+		return (e) => {
+			const rollData = this.actor.getRollData();
+			const speaker = ChatMessage.getSpeaker({
+				actor: this.actor,
+			});
+
+			const resolver = this.#getResolver(this.check_domains);
+
+			return runCheck(
+				rollData,
+				speaker,
+				resolver,
+				{
+					title: this.title,
+					origin: this.actor.system,
+				},
+				{ skip: e.shiftKey },
+			);
+		};
 	}
 	#generateAttackHandler({ map }) {
-		return () => console.log("#generateAttackHandler", map);
+		return (e) => {
+			const rollData = this.actor.getRollData();
+			const speaker = ChatMessage.getSpeaker({
+				actor: this.actor,
+			});
+
+			const resolver = this.#getResolver(this.check_domains);
+
+			const target = getTarget();
+			const difficulty = 10 + map * 5;
+
+			return runCheck(
+				rollData,
+				speaker,
+				resolver,
+				{
+					difficulty,
+					title: this.title,
+					against: Array.from(this.target_defenses),
+					target,
+					origin: this.actor.system,
+				},
+				{ skip: e.shiftKey },
+			);
+		};
 	}
+
 	#generateEffectHandler() {
 		return () => console.log("#generateEffectHandler");
 	}

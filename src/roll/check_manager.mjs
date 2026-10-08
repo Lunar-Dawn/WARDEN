@@ -112,28 +112,47 @@ class CheckManager extends CommonManager {
 	}
 
 	/**
- 	* The struct returned by targetDefence().
-	* @typedef {Object} TargetDefenceData
-	* @property {string} name - Lowercase name of the statistic.
-	* @property {number} value - The summed modifier value of the statistic.
-	*/
+	 * The struct returned by targetDefence().
+	 * @typedef {Object} TargetDefenceData
+	 * @property {string} name - Lowercase name of the statistic.
+	 * @property {number} value - The summed modifier value of the statistic.
+	 */
 
 	/**
 	 * Returns data about the target's statistic that's being rolled against, if there is any.
 	 * If there are more, returns the highest one. If there are multiple biggest, returns the one found earlier.
 	 * If there are none, returns a ""-named 0-value "statistic".
-	 * 
+	 *
 	 * @returns {TargetDefenceData}
 	 */
 	get targetDefence() {
 		if (!!this.cached_vs_data) return this.cached_vs_data;
-		if (this.parameters.target === null || this.parameters.target === undefined) return {name: "", value: 0};
+		if (
+			this.parameters.target === null ||
+			this.parameters.target === undefined ||
+			this.parameters.against === null ||
+			this.parameters.against === undefined ||
+			this.parameters.against.length === 0
+		)
+			return { name: "", value: 0 };
 
 		// TODO: the base character TypeDataModel should have a function that looks for the appropriate resolver, as both
 		// characters and opponents have different sets of resolvers with different default domains.
 		this.cached_vs_data = this.parameters.against
-			.map((x) => {return {name: x, value: this.parameters.target.getDynamicResultResolver([x, "defense"], [x, "defense"]).modifierSum()}})
-			.reduce((prev, current) => (prev && prev.value > current.value) ? prev : current);
+			.map((x) => {
+				return {
+					name: x,
+					value: this.parameters.target
+						.getDynamicResultResolver(
+							[x, "defense"],
+							[x, "defense"],
+						)
+						.modifierSum(),
+				};
+			})
+			.reduce((prev, current) =>
+				prev && prev.value > current.value ? prev : current,
+			);
 
 		return this.cached_vs_data;
 	}
@@ -147,7 +166,8 @@ class CheckManager extends CommonManager {
 	 * @returns {{difference: number, result_tier: -1|0|1|2}}
 	 */
 	calculateResult() {
-		const difference = this.roll.total - this.difficulty - this.targetDefence.value;
+		const difference =
+			this.roll.total - this.difficulty - this.targetDefence.value;
 
 		let result_tier;
 		if (difference >= 10) result_tier = 2;
@@ -181,8 +201,8 @@ class CheckManager extends CommonManager {
 				this.resolver,
 				{
 					self: this.parameters.origin,
-					target: this.parameters.target
-				}
+					target: this.parameters.target,
+				},
 			),
 		});
 
@@ -192,8 +212,11 @@ class CheckManager extends CommonManager {
 			Object.assign(this.roll.options, this.calculateResult());
 		}
 
-		const notes = await foundry.applications.ux.TextEditor.enrichHTML(this.resolver.calcNonTypeSums("note"), {});
-		Object.assign(this.roll.options, {notes});
+		const notes = await foundry.applications.ux.TextEditor.enrichHTML(
+			this.resolver.calcNonTypeSums("note"),
+			{},
+		);
+		Object.assign(this.roll.options, { notes });
 
 		await this.roll.toMessage({
 			speaker: this.speaker,

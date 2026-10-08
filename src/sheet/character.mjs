@@ -104,7 +104,7 @@ export class CharacterSheet extends BaseCharacterSheet {
 				description:
 					await foundry.applications.ux.TextEditor.implementation.enrichHTML(
 						a.system.description,
-						{actor: this.actor, item: a}
+						{ actor: this.actor, item: a },
 					),
 				expanded: this.expandedDescriptions.has(a.id),
 				feats: await Promise.all(
@@ -126,6 +126,11 @@ export class CharacterSheet extends BaseCharacterSheet {
 				),
 			})),
 		);
+
+		context.actions = actor.system.actions.map((a) => ({
+			action: a,
+			buttons: a.buttons,
+		}));
 
 		context.orphanedItems = this.#findOrphanedItems(context);
 

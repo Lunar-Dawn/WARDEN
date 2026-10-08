@@ -29,4 +29,10 @@ export class Action {
 		this.target_defenses = target_defenses;
 		this.damage_types = damage_types;
 	}
+
+	get buttons() {
+		const buttons = [];
+
+		return buttons;
+	}
 }

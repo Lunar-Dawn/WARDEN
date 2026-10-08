@@ -429,5 +429,16 @@
 				title="Permanent Active Effects"
 			}}
 		</div>
+
+		<section class="col-span-2">
+			<header class="col-span-2 black header grid place-center">Actions</header>
+			{{#each actions}}
+				<div class="col-span-2">
+					<header class="black bold grid place-center">{{ action.title }}</header>
+					{{#each buttons}}
+					{{/each}}
+				</div>
+			{{/each}}
+		</section>
 	</div>
 </section>

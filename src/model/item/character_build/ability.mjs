@@ -22,7 +22,7 @@ export class Ability extends BaseFeature {
 	}
 
 	get supportedTabs() {
-		return ["description", "properties", "effects"];
+		return ["description", "properties", "action", "effects"];
 	}
 
 	getProperties() {

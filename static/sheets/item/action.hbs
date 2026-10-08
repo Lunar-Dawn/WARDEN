@@ -1,0 +1,44 @@
+<section class="tab scrollable {{ tab.cssClass }}" data-group="primary" data-tab="action">
+	<section class="property-grid">
+		{{formGroup
+			fields.check_type
+			value=values.check_type
+			localize=true
+			classes="grid col-span-2 col-subgrid align-center"
+		}}
+		{{formGroup
+			fields.check_domains
+			value=values.check_domains
+			localize=true
+			classes="grid col-span-2 col-subgrid align-center"
+			disabled=(eq values.check_type "none")
+		}}
+		{{formGroup
+			fields.target_defenses
+			value=values.target_defenses
+			localize=true
+			classes="grid col-span-2 col-subgrid align-center"
+			disabled=(ne values.check_type "attack")
+		}}
+		{{formGroup
+			fields.effect_type
+			value=values.effect_type
+			localize=true
+			classes="grid col-span-2 col-subgrid align-center"
+		}}
+		{{formGroup
+			fields.effect_domains
+			value=values.effect_domains
+			localize=true
+			classes="grid col-span-2 col-subgrid align-center"
+			disabled=(eq action.effect_type "none")
+		}}
+		{{formGroup
+			fields.damage_types
+			value=values.damage_types
+			localize=true
+			classes="grid col-span-2 col-subgrid align-center"
+			disabled=(ne values.effect_type "damage")
+		}}
+	</section>
+</section>

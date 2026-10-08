@@ -253,6 +253,8 @@
 					"traits": "Traits",
 					"effects": "Effects",
 
+					"action": "Action",
+
 					"description": "Description"
 				}
 			}
@@ -462,7 +464,34 @@
 			"melee_strike_weapon_title": "Melee Strike ({weapon})",
 
 			"ranged_strike": "Ranged Strike",
-			"ranged_strike_weapon_title": "Ranged Strike ({weapon})"
+			"ranged_strike_weapon_title": "Ranged Strike ({weapon})",
+
+			"check_type": {
+				"label": "Check Type",
+
+				"none": "None",
+				"check": "Check",
+				"attack": "Attack"
+			},
+			"check_domains": {
+				"label": "Check Domains"
+			},
+			"target_defenses": {
+				"label": "Target Defenses"
+			},
+			"effect_type": {
+				"label": "Effect Type",
+
+				"none": "None",
+				"effect": "Other",
+				"damage": "Damage"
+			},
+			"effect_domains": {
+				"label": "Effect Domains"
+			},
+			"damage_types": {
+				"label": "Damage Type"
+			}
 		},
 
 		"damage_type": {

@@ -27,6 +27,9 @@ export class WARDENItemSheet extends HandlebarsApplicationMixin(ItemSheet) {
 				},
 			},
 		},
+		action: {
+			template: "systems/warden/static/sheets/item/action.hbs",
+		},
 	};
 
 	static DEFAULT_OPTIONS = {
@@ -94,12 +97,17 @@ export class WARDENItemSheet extends HandlebarsApplicationMixin(ItemSheet) {
 		switch (partId) {
 			case "properties":
 				context.properties = this.item.system.getProperties?.() ?? [];
+				break;
 			case "description":
 				context.description =
 					await foundry.applications.ux.TextEditor.implementation.enrichHTML(
 						this.item.system.description,
 						{ actor: this.item.actor, item: this.item },
 					);
+				break;
+			case "action":
+				context.values = this.item.system.action;
+				context.fields = this.item.system.schema.fields.action.fields;
 				break;
 			case "effects":
 				context.effects = Object.entries(

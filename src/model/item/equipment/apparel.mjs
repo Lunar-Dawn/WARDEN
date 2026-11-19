@@ -115,6 +115,10 @@ export class Apparel extends BaseEquipment {
 			switch (traitData.category) {
 				case "energy":
 					armourHalves = 1;
+
+					if (this.traits.has("reflective")) {
+						armourHalves = 2;
+					}
 					break;
 				case "special":
 					armourHalves = 0;

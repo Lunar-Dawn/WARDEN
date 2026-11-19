@@ -493,6 +493,56 @@
 				"advanced": {
 					"label": "Advanced",
 					"desc": "You must be at least <strong>Adept (+3)</strong> in <strong>Combat</strong> or suffer a <strong>-2 Item Penalty</strong> to all <strong>Checks</strong> when wearing this <strong>Apparel</strong>."
+				},
+				"bulky": {
+					"label": "Bulky",
+					"desc": "You gain a <strong>+1 Item Bonus</strong> to <strong>Toughness</strong> and <strong>Perception</strong> against damaging effects."
+				},
+				"cool": {
+					"label": "Cool",
+					"desc": "You gain a <strong>Benefit</strong> to <strong>Toughness Checks</strong> against heat-related Exposure."
+				},
+				"cumbersome": {
+					"label": "Cumbersome",
+					"desc": "Lowers your <strong>Speed</strong> by <strong>-1 meter</strong>."
+				},
+				"flimsy": {
+					"label": "Flimsy",
+					"desc": "When targeted with <strong>Sunder</strong>, the <strong>Check</strong> doesn't have a <strong>Detriment</strong>.",
+					"target": "The target's apparel has the <strong>Flimsy</strong> trait. Your <strong>Sunder Check</strong> has no <strong>Detriment</strong>."
+				},
+				"insulated": {
+					"label": "Insulated",
+					"desc": "You become immune to <strong>Gas</strong> and <strong>Toxic Damage</strong>, and can breathe in a vacuum for one <strong>Exploration</strong> round. If the apparel is <strong>Sundered</strong>, you lose the benefits."
+				},
+				"noisy": {
+					"label": "Noisy",
+					"desc": "You gain a <strong>Detriment</strong> on <strong>Stealth Checks</strong> while wearing it."
+				},
+				"pocketed": {
+					"label": "Pocketed",
+					"desc": "You can store one non-Heavy item in your pockets."
+				},
+				"powered": {
+					"label": "Powered",
+					"desc": "You gain <strong>+2 Item Bonus</strong> to <strong>Force Checks</strong> and <strong>Melee Damage</strong>."
+				},
+				"reflective": {
+					"label": "Reflective",
+					"desc": "Applies full <strong>Armor</strong> value to <strong>Energy Damage</strong>."
+				},
+				"slim": {
+					"label": "Slim",
+					"desc": "Cannot be <strong>Bulky</strong>. You can wear the <strong>Apparel</strong> with another piece of <strong>Apparel</strong>."
+				},
+				"styled": {
+					"label_dip": "Styled (Diplomacy)",
+					"label_int": "Styled (Intimidation)",
+					"desc": "Choose <strong>Diplomacy</strong> or <strong>Intimidation</strong>. You gain a <strong>+1 Item Bonus</strong> to your chosen <strong>Skill</strong> when wearing the item. You may switch the <strong>Skill</strong> with a <strong>Restyle (E) Action</strong>."
+				},
+				"warm": {
+					"label": "Warm",
+					"desc": "You gain a <strong>Benefit</strong> to <strong>Toughness Checks</strong> against cold-related Exposure."
 				}
 			},
 			"weapon": {

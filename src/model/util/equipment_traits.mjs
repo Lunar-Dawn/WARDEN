@@ -56,7 +56,7 @@
  * 
  * @param {Set<string>} traits The set of traits to look through.
  * @param {string} trait_start The common front part of the trait names, going with the above example, it could be 'magazine_'.
- * @param {string} trait_end The given trait's end part. In the above example, this would be `1`. Can be left empty if we don't
+ * @param {string} trait_end The given trait's end part. In the above example, this would be `1`. Can be left empty if we don't care.
  * @returns True if the a trait could be found that starts similarly to our given trait, but *isn't* our given trait 
  *          (as written above, an example case would be if we found `magazine_2`).
  */
@@ -597,5 +597,183 @@ export const APPAREL_TRAITS = {
                 value: 2,
             }
         ]
-    }
+    },
+    bulky: {
+        label: "warden.traits.apparel.bulky.label",
+        desc: "warden.traits.apparel.bulky.desc",
+        dynamic_effects: [
+            {
+                type: "bonus",
+                label: "Bulky",
+                domains: new Set(["toughness", "perception"]),
+                defaultEnabled: true,
+                applicable_if: [
+                    "character.apparel.trait.bulky",
+                    "defense"
+                ],
+
+                modifier_type: "item",
+
+                mode: "add",
+                value: 1,
+            }
+        ]
+    },
+    cool: {
+        label: "warden.traits.apparel.cool.label",
+        desc: "warden.traits.apparel.cool.desc",
+        dynamic_effects: [],
+    },
+    cumbersome: {
+        label: "warden.traits.apparel.cumbersome.label",
+        desc: "warden.traits.apparel.cumbersome.desc",
+        dynamic_effects: [
+            {
+                type: "penalty",
+                label: "Bulky",
+                domains: new Set(["speed"]),
+                defaultEnabled: true,
+                applicable_if: [
+                    "character.apparel.trait.cumbersome",
+                ],
+
+                modifier_type: "universal",
+
+                mode: "add",
+                value: 1,
+            }
+        ]
+    },
+    flimsy: {
+        label: "warden.traits.apparel.flimsy.label",
+        desc: "warden.traits.apparel.flimsy.desc",
+        dynamic_effects: [
+            {
+                type: "note",
+                label: "Flimsy",
+                domains: new Set(["sunder"]),
+                defaultEnabled: true,
+                applicable_if: ["target.apparel.trait.flimsy"],
+
+                modifier_type: "universal",
+
+                mode: "add",
+                value: "<p><strong>@Localise[warden.traits.apparel.flimsy.label]</strong> @Localise[warden.traits.apparel.flimsy.target]</p>",
+            }
+        ],
+    },
+    insulated: {
+        label: "warden.traits.apparel.insulated.label",
+        desc: "warden.traits.apparel.insulated.desc",
+        dynamic_effects: [],
+    },
+    noisy: {
+        label: "warden.traits.apparel.noisy.label",
+        desc: "warden.traits.apparel.noisy.desc",
+        dynamic_effects: [],
+    },
+    pocketed: {
+        label: "warden.traits.apparel.pocketed.label",
+        desc: "warden.traits.apparel.pocketed.desc",
+        dynamic_effects: [],
+    },
+    powered: {
+        label: "warden.traits.apparel.powered.label",
+        desc: "warden.traits.apparel.powered.desc",
+        dynamic_effects: [
+            {
+                type: "bonus",
+                label: "Powered",
+                domains: new Set(["strike.damage"]),
+                defaultEnabled: true,
+                applicable_if: [
+                    "character.apparel.trait.powered",
+                    "strike.melee"
+                ],
+
+                modifier_type: "item",
+
+                mode: "add",
+                value: 2,
+            },
+            {
+                type: "bonus",
+                label: "Powered",
+                domains: new Set(["skill.force"]),
+                defaultEnabled: true,
+                applicable_if: [
+                    "character.apparel.trait.powered"
+                ],
+
+                modifier_type: "item",
+
+                mode: "add",
+                value: 2,
+            }
+        ]
+    },
+    reflective: {
+        label: "warden.traits.apparel.reflective.label",
+        desc: "warden.traits.apparel.reflective.desc",
+        dynamic_effects: [],
+    },
+    slim: {
+        label: "warden.traits.apparel.slim.label",
+        desc: "warden.traits.apparel.slim.desc",
+        dynamic_effects: [],
+        validity_cb: (item) => {
+            return !item.traits.has("bulky");
+        },
+    },
+    styled_diplomacy: {
+        label: "warden.traits.apparel.styled.label_dip",
+        desc: "warden.traits.apparel.styled.desc",
+        validity_cb: (item) => {
+            return !findSimilarTraits(item.traits, "styled_", "diplomacy");
+        },
+        dynamic_effects: [
+            {
+                type: "bonus",
+                label: "Styled",
+                domains: new Set(["skill.diplomacy"]),
+                defaultEnabled: true,
+                applicable_if: [
+                    "character.apparel.trait.styled_diplomacy",
+                ],
+
+                modifier_type: "item",
+
+                mode: "add",
+                value: 1,
+            }
+        ]
+    },
+    styled_intimidation: {
+        label: "warden.traits.apparel.styled.label_int",
+        desc: "warden.traits.apparel.styled.desc",
+        validity_cb: (item) => {
+            return !findSimilarTraits(item.traits, "styled_", "intimidation");
+        },
+        dynamic_effects: [
+            {
+                type: "bonus",
+                label: "Styled",
+                domains: new Set(["skill.intimidation"]),
+                defaultEnabled: true,
+                applicable_if: [
+                    "character.apparel.trait.styled_intimidation",
+                ],
+
+                modifier_type: "item",
+
+                mode: "add",
+                value: 1,
+            }
+        ]
+    },
+    warm: {
+        label: "warden.traits.apparel.warm.label",
+        desc: "warden.traits.apparel.warm.desc",
+        dynamic_effects: [],
+    },
 }

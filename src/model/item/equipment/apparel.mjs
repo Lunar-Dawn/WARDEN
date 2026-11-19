@@ -150,7 +150,7 @@ export class Apparel extends BaseEquipment {
 			modifier_type: "item",
 
 			mode: "add",
-			value: Math.max(0, Math.floor(this.armor * armourHalves / 2) + strOrWeaknessMod),
+			value: Math.max(0, Math.floor(this.armor * armourHalves / 2) - strOrWeaknessMod),
 		};
 	}
 }
